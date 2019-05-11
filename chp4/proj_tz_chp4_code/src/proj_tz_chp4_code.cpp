@@ -17,9 +17,9 @@
 
 using std::cin;				using std::setprecision;
 using std::cout;			using std::sort;
-using std::domain_error		using std::streamsize;
+using std::domain_error;	using std::streamsize;
 using std::endl;			using std::string;
-using std::max				using std::vector;
+using std::max;				using std::vector;
 
 int main()
 {
@@ -27,15 +27,21 @@ int main()
 	Student_info record;
 	string::size_type maxlen = 0;	// storage for the length of the longest name
 
+	cout << "Enter data as follows: last name, mid-term grade, final exam grade <RETURN> " << endl;
+	cout << "Homework grades then <CTRL><D>. <CTRL><D> again when done entering all records." << endl << endl;
+	cout << "First student:" << endl;
 	// read and store the students' data
 	// invariant:	students contains all the student records read so far
 	//				maxlen contains the length of the longest name in students
 	while (read(cin, record))
 	{
 		// find length of longest name
-		maxlen = max(maxlen, record.name.size());
+		maxlen = max(maxlen, record.name.size()); // which is bigger, previous maxlen or current record.name.size()?
 		students.push_back(record);
+		cout << "Next student:" << endl;
 	}
+
+	cout << "done reading all student records... " << endl << endl << "Report:" << endl << endl;
 
 	// alphabetize the student records
 	sort(students.begin(),students.end(),compare);
@@ -44,7 +50,7 @@ int main()
 	for (vector<Student_info>::size_type i = 0; i != students.size(); ++i)
 	{
 		// write the name, padded on the right to maxlen + 1 characters
-		cout	<< students[i].name
+		cout	<< i << ") " << students[i].name
 				<< string(maxlen + 1 - students[i].name.size(), ' ');
 
 		// compute and write the grade
@@ -54,13 +60,11 @@ int main()
 			streamsize prec = cout.precision();
 			cout << setprecision(3) << final_grade
 				 << setprecision(prec);
-		} catch(domain_error e) {
+		} catch (domain_error e) {
 			cout << e.what();
 		}
 		cout << endl;
 	}
-
-
 	return 0;
 }
 

@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <ios>
 #include <string>
 #include <vector>
 
@@ -20,5 +21,7 @@ struct Student_info
 
 bool compare(const Student_info&, const Student_info&);
 std::istream& read(std::istream&, Student_info&);
-std::istream& read_hw(std::istream&, std::vector<double>&)''
+std::istream& read_hw(std::istream&, std::vector<double>&);
+
+
 #endif /* INC_STUDENT_INFO_H_ */

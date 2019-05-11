@@ -6,8 +6,12 @@
  */
 
 #include "Student_info.h"
+#include <iostream>
+#include <string>
+#include <vector>
 
 using std::istream;			using std::vector;
+// using std::cout;			using std::endl;
 
 bool compare(const Student_info& x, const Student_info& y)
 {
@@ -16,8 +20,7 @@ bool compare(const Student_info& x, const Student_info& y)
 
 istream& read(istream& is, Student_info& s)
 {
-
-	// read and sture the name, midterm and final grades
+	// read and store the name, midterm and final grades
 	is >> s.name >> s.midterm >> s.final;
 
 	read_hw(is, s.homework);
