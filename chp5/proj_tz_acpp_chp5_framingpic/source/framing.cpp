@@ -34,7 +34,7 @@ vector<string> frame(const vector<string>& lines)
 	for (vector<string>::size_type i=0; i != lines.size(); ++i)
 	{
 		ret.push_back("* " + lines[i]
-						+ string(maxlen - lines[i].size(), ' ') + " *");
+			+ string(maxlen - lines[i].size(), ' ') + " *");
 	}
 
 	// write the bottom border
