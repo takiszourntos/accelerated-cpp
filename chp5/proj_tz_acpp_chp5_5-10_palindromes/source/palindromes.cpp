@@ -32,9 +32,9 @@ int main()
 	}
 
 	// display the palindromes, while you're at it, find the longest palindrome
-	list<string> palindromes;
-	find_palin(dict, palindromes); // store the palindromes here
-	cout << endl << "Here are the palindromes in the file " << " :" << endl;
+	list<string> palindromes; // store the palindromes here
+	find_palin(dict, palindromes);
+	cout << endl << "Here are the palindromes in the file ./dict.txt:" << endl;
 	list<string>::const_iterator iter_pd = palindromes.begin();
 	list<string>::size_type maxlen = 0;
 	list<string>::size_type currentlen = 0;
