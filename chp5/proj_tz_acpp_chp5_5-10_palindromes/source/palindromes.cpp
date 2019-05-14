@@ -52,7 +52,8 @@ int main()
 		++iter_pd;
 	}
 	cout << endl;
-	cout << "And, by the way, the longest palindrome is " << max_palindrome << " at length of " << maxlen << " characters." << endl;
+	cout	<< "And, by the way, the longest palindrome is " << max_palindrome
+			<< " at a length of " << maxlen << " characters!" << endl;
 	return 0;
 }
 
