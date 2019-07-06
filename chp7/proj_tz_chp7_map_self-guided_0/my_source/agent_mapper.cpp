@@ -34,10 +34,10 @@ int main()
 {
 	/* retrieve known contexts from file, knownfeatures.data */
 	vector<read_data_t>		read_data;
-	read_data = load_known_contexts_from_file("knownfeatures.data");
+	read_data = loadKnownContextsfromFile("knownfeatures.data");
 
 	/* transfer data to global map */
-	load_global_map_with_file_data(global_map, read_data);
+	loadGlobalMapwithFileData(global_map, read_data);
 
 	/* create 2D space for agent */
 	vvs_t	physenv;					// variable storing the "literal" environment in which agent navigates
@@ -65,16 +65,30 @@ int main()
 		physenv[lmE.X][lmE.Y] = "E";
 
 	/* start building the associative map */
-	loc_t		r0, r1; // agent's initial and current positions
-	orient_t 	theta;		// agent's orientation
+	loc_t				r0={0,0}; 				// agent's initial position
+	loc_t				r1=r0;
+	orient_t 			theta=North;			// agent's orientation
+	scan_direction_t	scan_sense = SE;		// initial scanning sense
+	int					t1=0, t2=0, counter=0; 	// time tracking variables
+	bool				mapnotfinished=true;	// flag indicating completion of associative map;
 
+	// invariant: mapnotfinished=TRUE means that we still have work to do
+	while (mapnotfinished)
+	{
+		r2 = getAgentNextDest(t1++, r1,scan_sense);
+		t2 = 0;
+		// invariant: r1 is the next point to in physenv[][] to which the agent must move
+		while (r1 != r2)
+		{
+			agentScan360(r1,theta,physenv);
+			r1 = agentMove(t2++,r1,r2,scan_sense);
+		}
+		if (((global_map.size() >= MaxMapEntries)) || (counter==MaxIterations) )
+			mapnotfinished=false;
+		++counter;
+	}
 
-
-
-
-
-
-
+	dumpMappedEnv(); // check that we have a good sense of the world
 	return 0;
 }
 
