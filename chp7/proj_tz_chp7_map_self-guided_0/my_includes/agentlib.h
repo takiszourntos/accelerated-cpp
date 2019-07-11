@@ -65,13 +65,13 @@ typedef		enum	e_scan_direction_t	// scan goes from top left to bottom right,
 	} 	scan_direction_t;
 
 
-typedef		struct	loc_t	// type for a location in the physical environment
+struct	loc_t	// type for a location in the physical environment
 {
 	vvs_sz_t		X;
 	vvs_sz_t		Y;
 };
 
-typedef		struct	read_data_t		// type for storing data read from file
+struct	read_data_t		// type for storing data read from file
 {
 	std::string		context;
 	region_t		region;
@@ -100,6 +100,14 @@ std::vector<read_data_t> loadKnownContextsfromFile(const std::string);
  *
  */
 void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vector<read_data_t>&);
+
+/*
+ * 		function:	scan
+ * 		purpose:	scan rectangular space either in SE or NW sense, using recursion
+ * 		parameters:	rA (top left corner of scan), rB (bottom right corner of scan), r0 (agent current location)
+ * 					spatial_mem (associative map of space), physmap (physical map of space)
+ */
+void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, vvs_t&);
 
 
 
