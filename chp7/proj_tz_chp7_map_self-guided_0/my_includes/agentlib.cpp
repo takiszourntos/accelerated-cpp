@@ -11,6 +11,7 @@
 // my own includes
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_math.h>
+#include <math.h>
 #include "agentlib.h"
 
 /*
@@ -26,11 +27,14 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 	gsl_vector *p_ag = gsl_vector_alloc(2);
 	gsl_vector *err = gsl_vector_alloc(2);
 	gsl_vector *p_N = gsl_vector_alloc(2);
+	gsl_vector *p_E = gsl_vector_alloc(2);
+	gsl_vector *p_S = gsl_vector_alloc(2);
+	gsl_vector *p_W = gsl_vector_alloc(2);
 
-	gsl_vector_set_basis(p_N, 1); // set the unit vector in the North direction as reference
 	gsl_vector_set(p_ag, 0, (double) r0.X); // set X-position of agent
 	gsl_vector_set(p_ag, 1, (double) r0.Y); // set Y-position of agent
-	double size_err;
+	double size_err, dotp, acosN, acosE, acosS, acosW; // basic calculation storage
+	std::string acosdir; // store angles in each direction
 
 	for (std::vector<loc_t>::size_type i=0; i != num_lms; ++i)
 	{
@@ -42,12 +46,25 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		gsl_vector_memcpy(err, p_lm); // copy p_lm into err, to prepare for subtraction
 		gsl_vector_sub(err, p_ag); // compute p_lm - p_ag, store the result in err
 
-		size_err = gsl_blas_dnrm2(err);
+		size_err = gsl_blas_dnrm2(err); // compute the distance to the landmark
 
-		if ((size_err > MinVectorSize) && (size_err < SenseRange)) // is the landmark in range?
+		if ( (size_err < SenseRange) && (size_err > MinVectorNorm) ) // is the landmark in range?
 		{
-			// compute the direction of the landmark relative to the agent, rounding to the nearest 22.5 degrees
+			gsl_vector_set_basis(p_N, 1); // set the unit vector in the North direction as reference
+			gsl_vector_set_basis(p_E, 0); // E-direction reference
+			gsl_vector_set_basis(p_S, 1); gsl_vector_scale(p_S, -1); // S-direction reference
+			gsl_vector_set_basis(p_W, 0); gsl_vector_scale(p_W, -1);// W-direction reference
 
+			// compute the direction of the landmark relative to the agent, rounding to the nearest 22.5 degrees
+			gsl_vector_scale(err, 1/size_err); // re-scale err so that it is a unit vector
+			gsl_blas_ddot(p_N, err, &dotp); // compute dot product between vectors
+			acosN=acos(dotp); // find the angle based on the dot product
+			gsl_blas_ddot(p_E, err, &dotp);
+			acosE=acos(dotp);
+			gsl_blas_ddot(p_S, err, &dotp);
+			acosS=acos(dotp);
+			gsl_blas_ddot(p_W, err, &dotp);
+			acosW=acos(dotp);
 		}
 	}
 
