@@ -20,6 +20,7 @@
 #include <string>
 #include <map>
 // my own includes
+#include <gsl/gsl_blas.h>
 #include "agentlib.h"
 
 // declare STD uses
@@ -30,8 +31,8 @@ using std::cin;				using std::endl;
 // main code
 int main()
 {
-	static		map<string, region_t>		global_map;
-	volatile	bool						mappingfinished=false;	// flag indicating completion of associative map;
+	map<string, region_t>		global_map;
+	bool						mappingfinished=false;	// flag indicating completion of associative map;
 	/* retrieve known contexts from file, knownfeatures.data */
 	vector<read_data_t>		read_data;
 	read_data = loadKnownContextsfromFile("knownfeatures.data");
@@ -40,40 +41,37 @@ int main()
 	loadGlobalMapwithFileData(global_map, read_data);
 
 	/* create 2D space for agent */
-	vvs_t	physenv;					// variable storing the "literal" environment in which agent navigates
-	loc_t	lmA, lmB, lmC, lmD, lmE;	// variables storing the locations of landmarks A through E in the physical environment
+	vvs_t			physenv;					// variable storing the "literal" environment in which agent navigates
+	loc_t			lmA, lmB, lmC, lmD, lmE;	// variables storing the locations of landmarks A through E in the physical environment
+	vector<loc_t> 	v_lm; // vector of landmarks
+	lmA.X = 5;	lmA.Y = 5;	v_lm.push_back(lmA);
+	lmB.X = 50;	lmB.Y = 50;	v_lm.push_back(lmB);
+	lmC.X = 85; lmC.Y = 7;	v_lm.push_back(lmC);
+	lmD.X = 3;  lmD.Y = 90;	v_lm.push_back(lmD);
+	lmE.X = 80; lmE.Y = 83;	v_lm.push_back(lmE);
 
 	/* initialize physical environment */
-		lmA.X = 5;	lmA.Y = 5;
-		lmB.X = 50;	lmB.Y = 50;
-		lmC.X = 85; lmC.Y = 7;
-		lmD.X = 3;  lmD.Y = 90;
-		lmE.X = 80; lmE.Y = 83;
-		// load the physical environment with spaces by default
-		for (vvs_sz_t i=0; i!=Nx; ++i)
+	for (vvs_sz_t i=0; i!=Nx; ++i)
+	{
+		for (vvs_sz_t j=0; j!=Ny; ++j)
 		{
-			for (vvs_sz_t j=0; j!=Ny; ++j)
-			{
-				physenv[i][j]=" ";
-			}
+			physenv[i][j]=" ";
 		}
-		// position the landmarks
-		physenv[lmA.X][lmA.Y] = "A";
-		physenv[lmB.X][lmB.Y] = "B";
-		physenv[lmC.X][lmC.Y] = "C";
-		physenv[lmD.X][lmD.Y] = "D";
-		physenv[lmE.X][lmE.Y] = "E";
+	}
+	physenv[lmA.X][lmA.Y] = "A"; // position of landmark A
+	physenv[lmB.X][lmB.Y] = "B"; // position of landmark B
+	physenv[lmC.X][lmC.Y] = "C"; // position of landmark C
+	physenv[lmD.X][lmD.Y] = "D"; // position of landmark D
+	physenv[lmE.X][lmE.Y] = "E"; // position of landmark E
 
 	/* start building the associative map */
 	loc_t				r0={0,0}; 				// agent's initial position
 	loc_t				r1=r0;
 	orient_t 			theta=North;			// agent's orientation
 	scan_direction_t	scan_sense = SE;		// initial scanning sense
-	int					t1=0, t2=0, counter=0; 	// time tracking variables
-
 	loc_t				rA=r0;					// upper left corner of search space
 	loc_t				rB={Nx-1, Ny-1};		// bottom right corner of search space
-	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv);
+	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv, v_lm);
 
 	return 0;
 }

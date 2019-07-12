@@ -25,6 +25,7 @@
 #define		Ny				100 	// number of rows in physical environment
 #define		MaxMapEntries	48		// maximum number of contexts
 #define		MaxIterations	9999	// maximum number of times main mapping loop can execute
+#define		SenseRange		75		// units of distance that the agent can "see"
 
 /********************************************************************************************************
  * 											TYPEDEFs
@@ -101,13 +102,26 @@ std::vector<read_data_t> loadKnownContextsfromFile(const std::string);
  */
 void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vector<read_data_t>&);
 
+
+/*
+ * 		function:	agentScan360
+ * 		purpose:	at a fixed position (loc_t) in the physical environment, deduce the context string,
+ * 					which consists of relative position data, e.g., lm A to East, lm_B to SW, to be identified
+ * 					as the key AEBSW for the associative map;
+ * 		parameters: the agent's location, the associative map, the physical map, and the landmark locations
+ * 		returns:	nothing (changes are made to the associative map)
+ */
+void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&);
+
+
+
 /*
  * 		function:	scan
  * 		purpose:	scan rectangular space either in SE or NW sense, using recursion
  * 		parameters:	rA (top left corner of scan), rB (bottom right corner of scan), r0 (agent current location)
  * 					spatial_mem (associative map of space), physmap (physical map of space)
  */
-void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, vvs_t&);
+void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&);
 
 
 
