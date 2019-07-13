@@ -33,6 +33,8 @@ int main()
 {
 	map<string, region_t>		global_map;
 	bool						mappingfinished=false;	// flag indicating completion of associative map;
+	vector<string> orient_str	= {"No","NE","Ea","SE","So","SW","We","NW"}; // strings corresponding to orient_t directions
+
 	/* retrieve known contexts from file, knownfeatures.data */
 	vector<read_data_t>		read_data;
 	read_data = loadKnownContextsfromFile("knownfeatures.data");
@@ -40,17 +42,8 @@ int main()
 	/* transfer data to global map */
 	loadGlobalMapwithFileData(global_map, read_data);
 
-	/* create 2D space for agent */
-	vvs_t			physenv;					// variable storing the "literal" environment in which agent navigates
-	loc_t			lmA, lmB, lmC, lmD, lmE;	// variables storing the locations of landmarks A through E in the physical environment
-	vector<loc_t> 	v_lm; // vector of landmarks
-	lmA.X = 5;	lmA.Y = 5;	v_lm.push_back(lmA);
-	lmB.X = 50;	lmB.Y = 50;	v_lm.push_back(lmB);
-	lmC.X = 85; lmC.Y = 7;	v_lm.push_back(lmC);
-	lmD.X = 3;  lmD.Y = 90;	v_lm.push_back(lmD);
-	lmE.X = 80; lmE.Y = 83;	v_lm.push_back(lmE);
-
 	/* initialize physical environment */
+	vvs_t	physenv;					// variable storing the "literal" environment in which agent navigates
 	for (vvs_sz_t i=0; i!=Nx; ++i)
 	{
 		for (vvs_sz_t j=0; j!=Ny; ++j)
@@ -58,11 +51,33 @@ int main()
 			physenv[i][j]=" ";
 		}
 	}
-	physenv[lmA.X][lmA.Y] = "A"; // position of landmark A
-	physenv[lmB.X][lmB.Y] = "B"; // position of landmark B
-	physenv[lmC.X][lmC.Y] = "C"; // position of landmark C
-	physenv[lmD.X][lmD.Y] = "D"; // position of landmark D
-	physenv[lmE.X][lmE.Y] = "E"; // position of landmark E
+
+	/* create FIVE landmarks at fixed locations */
+	string				landmarks="ABCDE"; // there must be at least 5 characters in this string
+	vector<loc_t>		v_lm;	// variables storing the locations of landmarks A through E in the physical environment
+	loc_t				lmA = {5, 5};	v_lm.push_back(lmA);
+	loc_t				lmB = {50, 50};	v_lm.push_back(lmB);
+	loc_t				lmC = {85, 7};	v_lm.push_back(lmC);
+	loc_t				lmD = {3, 90};	v_lm.push_back(lmD);
+	loc_t				lmE = {80, 83};	v_lm.push_back(lmE);
+
+	map<string, loc_t> 	m_lm;	// container of landmarks with key-location relationship
+	string::const_iterator siter=landmarks.begin();		// iterator for landmarks string
+
+	if (landmarks.size() < v_lm.size())
+	{
+		cout << "Error--- there are more landmarks than landmark labels!" << endl;
+		return 1; // provide an error code
+	}
+	vector<loc_t>::size_type i=0;
+	// invariant: siter points to the next landmark to be incorporated
+	while (siter != landmarks.end())
+	{
+		m_lm[*siter]=v_lm[i];
+		physenv[v_lm[i].X][v_lm[i].Y]=*siter;
+		++i;
+		++siter;
+	}
 
 	/* start building the associative map */
 	loc_t				r0={0,0}; 				// agent's initial position
@@ -71,7 +86,7 @@ int main()
 	scan_direction_t	scan_sense = SE;		// initial scanning sense
 	loc_t				rA=r0;					// upper left corner of search space
 	loc_t				rB={Nx-1, Ny-1};		// bottom right corner of search space
-	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv, v_lm);
+	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv, m_lm);
 
 	return 0;
 }

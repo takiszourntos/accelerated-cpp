@@ -35,16 +35,28 @@ short int	sgn(double x)
 	return y;
 }
 
+/*
+ * max
+ */
+bool maxdp(dprec_t A, dprec_t B)
+{
+	bool ret=false;
+	if (A.dp >= B.dp)
+	{
+		ret = true;
+	}
+	return ret;
+}
 
 
 /*
  * scan 360 (at a fixed point in space) function
  */
-void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::vector<loc_t>& landmarks)
+void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::map<string, loc_t>& landmarks)
 {
 	// identify all the landmarks within sensor range
-	std::vector<loc_t>	relevant_landmarks;
-	std::vector<loc_t>::size_type	num_lms = landmarks.size(); // the number of landmarks
+	std::map<string, loc_t>::const_iterator	lm_iter=landmarks.begin();
+
 	double Xlm, Ylm; // storage for a landmark under consideration
 	gsl_vector *p_lm = gsl_vector_alloc(2); // gsl vector containing current landmark
 	gsl_vector *p_ag = gsl_vector_alloc(2);	// gsl vector to store agent's current position
@@ -55,12 +67,10 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 	double size_err, dotp, acosN, acosE, acosS, acosW; // basic calculation storage
 	vector<short int> angle_signs; // signs is important
 
-	gsl_vector *p_SW= gsl_vector_alloc(2); gsl_vector_set(p_SW, 0, -1/sqrt(2)); gsl_vector_set(p_SW, 1, -1/sqrt(2));	// South-East unit vector
-	gsl_vector *p_W = gsl_vector_alloc(2); gsl_vector_set_basis(p_W, 0); gsl_vector_scale(p_W, -1); // West unit vector
-	gsl_vector *p_NW= gsl_vector_alloc(2); gsl_vector_set(p_NW, 0, -1/sqrt(2)); gsl_vector_set(p_NW, 1, 1/sqrt(2)); // North-West unit vector
-
-	for (std::vector<loc_t>::size_type i=0; i != num_lms; ++i)
+	// lm_iter points to landmark to be checked w.r.t. this location (r0) of the agent
+	while (lm_iter != landmarks.end())
 	{
+		std::string keylm = *lm_iter->first; // name of current landmark
 		Xlm = (double) landmarks[i].X;
 		Ylm = (double) landmarks[i].Y;
 		gsl_vector_set(p_lm, 0, Xlm); // set first element of p_lm
@@ -80,11 +90,6 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 			gsl_vector_scale(err, 1/size_err); // re-scale err so that it is a unit vector
 			double Xe = gsl_vector_get(err, 0);
 			double Ye = gsl_vector_get(err, 1);
-			struct dprec_t // define a type to store dot products and corresponding directions
-			{
-				orient_t dir;
-				double dp;
-			};
 			std::vector<dprec_t> dotprods; // store dot products and directions here
 			std::vector<dprec_t>::const_iterator iter = dotprods.begin();
 			dprec_t dpvar; // temporary storage here
@@ -98,8 +103,6 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 				dpvar.dir = North;		gsl_blas_ddot(p_N, err, &dpvar.dp);		dotprods.push_back(dpvar);
 				dpvar.dir = NorthEast;	gsl_blas_ddot(p_NE, err, &dpvar.dp);	dotprods.push_back(dpvar);
 				dpvar.dir = East;		gsl_blas_ddot(p_E, err, &dpvar.dp); 	dotprods.push_back(dpvar);
-				iter = std::max_element(dotprods.begin(),dotprods.end());
-				lmdir = iter->dir;
 			}
 			else if ( (Xe >= 0) && (Ye <= 0) )
 			{
@@ -109,24 +112,34 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 				gsl_vector *p_S = gsl_vector_alloc(2); gsl_vector_set_basis(p_S, 1); gsl_vector_scale(p_S, -1);	// South unit vector
 				dpvar.dir = East;		gsl_blas_ddot(p_E, err, &dpvar.dp); 	dotprods.push_back(dpvar);
 				dpvar.dir = SouthEast;	gsl_blas_ddot(p_SE, err, &dpvar.dp); 	dotprods.push_back(dpvar);
-				dpvar.dir = South;		gsl_blas_ddot(p_E, err, &dpvar.dp); 	dotprods.push_back(dpvar);
-
+				dpvar.dir = South;		gsl_blas_ddot(p_S, err, &dpvar.dp); 	dotprods.push_back(dpvar);
 			}
-
-
-			short int errX = sgn()
-			gsl_blas_ddot(p_N, err, &dotp); acosN=acos(dotp); 	// compute dot product between vectors, find the angle
-			gsl_blas_ddot(p_E, err, &dotp); acosE=acos(dotp); 	// note that acos(x) >=0 for x in [0, PI/2],
-			gsl_blas_ddot(p_S, err, &dotp); acosS=acos(dotp);	// and acos(x) < 0 for x in (PI/2, PI].
-			gsl_blas_ddot(p_W, err, &dotp); acosW=acos(dotp);	// Calculating this angle wrt each major directional axis,
-																// uniquely determines the quadrant that the err vector is in
-
+			else if ((Xe <= 0) && (Ye <= 0) )
+			{
+				// in Quadrant III
+				gsl_vector *p_S = gsl_vector_alloc(2); gsl_vector_set_basis(p_S, 1); gsl_vector_scale(p_S, -1);	// South unit vector
+				gsl_vector *p_SW= gsl_vector_alloc(2); gsl_vector_set(p_SW, 0, -1/sqrt(2)); gsl_vector_set(p_SW, 1, -1/sqrt(2));	// South-East unit vector
+				gsl_vector *p_W = gsl_vector_alloc(2); gsl_vector_set_basis(p_W, 0); gsl_vector_scale(p_W, -1); // West unit vector
+				dpvar.dir = South;		gsl_blas_ddot(p_S, err, &dpvar.dp); 	dotprods.push_back(dpvar);
+				dpvar.dir = SouthWest;	gsl_blas_ddot(p_SW, err, &dpvar.dp); 	dotprods.push_back(dpvar);
+				dpvar.dir = West;		gsl_blas_ddot(p_W, err, &dpvar.dp); 	dotprods.push_back(dpvar);
+			}
+			else
+			{
+				// in Quadrant IV
+				gsl_vector *p_W = gsl_vector_alloc(2); gsl_vector_set_basis(p_W, 0); gsl_vector_scale(p_W, -1); // West unit vector
+				gsl_vector *p_NW= gsl_vector_alloc(2); gsl_vector_set(p_NW, 0, -1/sqrt(2)); gsl_vector_set(p_NW, 1, 1/sqrt(2)); // North-West unit vector
+				gsl_vector *p_N	= gsl_vector_alloc(2); gsl_vector_set_basis(p_N, 1);	// North unit vector
+				dpvar.dir = West;		gsl_blas_ddot(p_W, err, &dpvar.dp); 	dotprods.push_back(dpvar);
+				dpvar.dir = NorthWest;	gsl_blas_ddot(p_NW, err, &dpvar.dp);	dotprods.push_back(dpvar);
+				dpvar.dir = North;		gsl_blas_ddot(p_N, err, &dpvar.dp);		dotprods.push_back(dpvar);
+			}
+			iter = std::max_element(dotprods.begin(),dotprods.end(),maxdp);
+			lmdir = iter->dir;
 		}
+		++lm_iter; // point to next landmark in container
 	}
-
-
 	// compute direction to landmark, relative to agent's position
-
 	return;
 }
 

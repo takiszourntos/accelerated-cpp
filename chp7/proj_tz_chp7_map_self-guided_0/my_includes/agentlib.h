@@ -37,7 +37,7 @@ typedef	std::vector<std::vector<std::string> >	vvs_t;	// 2D vector type for the
 
 typedef	vvs_t::size_type	vvs_sz_t;	// size_type for 2D vector type
 
-typedef		enum 	e_region_t 	// enumerate the possible regions
+typedef	enum 	e_region_t 	// enumerate the possible regions
 	{
 		R0,
 		R1,
@@ -47,7 +47,7 @@ typedef		enum 	e_region_t 	// enumerate the possible regions
 		R5
 	}	region_t;
 
-typedef		enum	e_orient_t	// enumerate the possible directions
+typedef	enum	e_orient_t	// enumerate the possible directions
 	{
 		North,
 		NorthEast,
@@ -59,8 +59,9 @@ typedef		enum	e_orient_t	// enumerate the possible directions
 		NorthWest
 	}	orient_t;
 
-typedef		enum	e_scan_direction_t	// scan goes from top left to bottom right,
-										// or from bottom right to top left
+
+typedef	enum	e_scan_direction_t	// scan goes from top left to bottom right,
+									// or from bottom right to top left
 	{
 		SE,
 		NW
@@ -78,6 +79,13 @@ struct	read_data_t		// type for storing data read from file
 	std::string		context;
 	region_t		region;
 };
+
+struct dprec_t // define a type to store dot products and corresponding directions
+{
+	orient_t dir;
+	double dp;
+};
+
 
 
 /********************************************************************************************************
@@ -132,7 +140,7 @@ void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const s
  * 					spatial_mem (associative map of space), physmap (physical map of space)
  * 		returns: 	nothing (void type, but changes are made to the spatial memory, a.k.a., the associate map)
  */
-void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&);
+void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::map<string, loc_t>&);
 
 
 
