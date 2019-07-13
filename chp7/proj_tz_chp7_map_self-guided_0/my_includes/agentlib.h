@@ -86,6 +86,15 @@ struct	read_data_t		// type for storing data read from file
  */
 
 /*
+ * 		function: 	sgn
+ * 		purpose:	determines the sign of a double variable
+ * 		parameters:	a real number (double)
+ * 		returns:	+1 or -1 (short int)
+ *
+ */
+short int	sgn(double);
+
+/*
  * 		function: 	load_known_contexts_from_file
  * 		purpose:	reads pairs of tokens from a file of the form <string, unsigned_integer> <newline>
  * 		parameters:	string consisting of the file name
@@ -98,7 +107,7 @@ std::vector<read_data_t> loadKnownContextsfromFile(const std::string);
  * 		function: 	load_global_map_with_file_data
  * 		purpose:	fills contextual/associative map data structure with information in vector of read_data_t elements
  * 		parameters:	the associate map (passed by reference), and the vector of read_data_t elements, passed by constant reference
- * 		returns:	nothing (void function)
+ * 		returns:	nothing (void function)space
  *
  */
 void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vector<read_data_t>&);
@@ -118,9 +127,10 @@ void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const s
 
 /*
  * 		function:	scan
- * 		purpose:	scan rectangular space either in SE or NW sense, using recursion
+ * 		purpose:	survey a rectangular subset of 2D space, either in a SE or a NW sense, using recursion
  * 		parameters:	rA (top left corner of scan), rB (bottom right corner of scan), r0 (agent current location)
  * 					spatial_mem (associative map of space), physmap (physical map of space)
+ * 		returns: 	nothing (void type, but changes are made to the spatial memory, a.k.a., the associate map)
  */
 void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&);
 
