@@ -33,7 +33,11 @@ int main()
 {
 	map<string, region_t>		global_map;
 	bool						mappingfinished=false;	// flag indicating completion of associative map;
-	vector<string> orient_str	= {"No","NE","Ea","SE","So","SW","We","NW"}; // strings corresponding to orient_t directions
+	vector<string> orient_str; // strings corresponding to eight orient_t directions
+	orient_str.push_back("No"); orient_str.push_back("NE");
+	orient_str.push_back("Ea"); orient_str.push_back("SE");
+	orient_str.push_back("So"); orient_str.push_back("SW");
+	orient_str.push_back("We"); orient_str.push_back("NW");
 
 	/* retrieve known contexts from file, knownfeatures.data */
 	vector<read_data_t>		read_data;
@@ -86,7 +90,7 @@ int main()
 	scan_direction_t	scan_sense = SE;		// initial scanning sense
 	loc_t				rA=r0;					// upper left corner of search space
 	loc_t				rB={Nx-1, Ny-1};		// bottom right corner of search space
-	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv, m_lm);
+	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv, m_lm, orient_str);
 
 	return 0;
 }

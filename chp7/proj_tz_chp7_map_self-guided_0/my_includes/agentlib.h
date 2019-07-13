@@ -140,7 +140,7 @@ void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const s
  * 					spatial_mem (associative map of space), physmap (physical map of space)
  * 		returns: 	nothing (void type, but changes are made to the spatial memory, a.k.a., the associate map)
  */
-void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::map<string, loc_t>&);
+void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::map<string, loc_t>&, const std::vector<std::string>&);
 
 
 
