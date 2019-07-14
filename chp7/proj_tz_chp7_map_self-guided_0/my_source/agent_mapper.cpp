@@ -57,7 +57,7 @@ int main()
 	}
 
 	/* create FIVE landmarks at fixed locations */
-	string				landmarks="ABCDE"; // there must be at least 5 characters in this string
+	string				lm_labels="ABCDE"; // there must be at least FIVE UNIQUE characters in this string
 	vector<loc_t>		v_lm;	// variables storing the locations of landmarks A through E in the physical environment
 	loc_t				lmA = {5, 5};	v_lm.push_back(lmA);
 	loc_t				lmB = {50, 50};	v_lm.push_back(lmB);
@@ -66,16 +66,16 @@ int main()
 	loc_t				lmE = {80, 83};	v_lm.push_back(lmE);
 
 	map<string, loc_t> 	m_lm;	// container of landmarks with key-location relationship
-	string::const_iterator siter=landmarks.begin();		// iterator for landmarks string
+	string::const_iterator siter=lm_labels.begin();		// iterator for landmarks string
 
-	if (landmarks.size() < v_lm.size())
+	if ( lm_labels.size() < (string::size_type) v_lm.size() )
 	{
 		cout << "Error--- there are more landmarks than landmark labels!" << endl;
 		return 1; // provide an error code
 	}
 	vector<loc_t>::size_type i=0;
-	// invariant: siter points to the next landmark to be incorporated
-	while (siter != landmarks.end())
+	// invariant: siter points to the next landmark to be incorporated into our little key-landmark container
+	while (siter != lm_labels.end())
 	{
 		m_lm[*siter]=v_lm[i];
 		physenv[v_lm[i].X][v_lm[i].Y]=*siter;

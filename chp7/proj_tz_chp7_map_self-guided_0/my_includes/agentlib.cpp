@@ -52,10 +52,10 @@ bool maxdp(dprec_t A, dprec_t B)
 /*
  * scan 360 (at a fixed point in space) function
  */
-void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::map<string, loc_t>& landmarks, const std::vector<std::string>& orient_str)
+void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::map<std::string, loc_t>& landmarks, const std::vector<std::string>& orient_str)
 {
 	// identify all the landmarks within sensor range
-	std::map<string, loc_t>::const_iterator	lm_iter=landmarks.begin();
+	std::map<std::string, loc_t>::const_iterator	lm_iter=landmarks.begin();
 
 	double Xlm, Ylm; // storage for a landmark under consideration
 	gsl_vector *p_lm = gsl_vector_alloc(2); // gsl vector containing current landmark
@@ -66,12 +66,12 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 
 	double size_err, dotp, acosN, acosE, acosS, acosW; // basic calculation storage
 
-	string keylm, context;
+	std::string keylm, context;
 	// lm_iter points to landmark to be checked w.r.t. this location (r0) of the agent
 	while (lm_iter != landmarks.end())
 	{
-		Xlm = (double) landmarks[i].X;
-		Ylm = (double) landmarks[i].Y;
+		Xlm = (double) (lm_iter->second).X;
+		Ylm = (double) (lm_iter->second).Y;
 		gsl_vector_set(p_lm, 0, Xlm); // set first element of p_lm
 		gsl_vector_set(p_lm, 1, Ylm); // set second element of p_lm
 

@@ -123,8 +123,8 @@ void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vect
 
 /*
  * 		function:	agentScan360
- * 		purpose:	at a fixed position (loc_t) in the physical environment, deduce the context string,
- * 					which consists of relative position data, e.g., lm A to East, lm_B to SW, to be identified
+ * 		purpose:	at a fixed position (loc_t, first parameter) in the physical environment, deduce the context string,
+ * 					which consists of relative position data, e.g., lm_A to East, lm_B to SW, to be identified
  * 					as the key AEBSW for the associative map;
  * 		parameters: the agent's location, the associative map, the physical map, and the landmark locations
  * 		returns:	nothing (changes are made to the associative map)
@@ -140,7 +140,7 @@ void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const s
  * 					spatial_mem (associative map of space), physmap (physical map of space)
  * 		returns: 	nothing (void type, but changes are made to the spatial memory, a.k.a., the associate map)
  */
-void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::map<string, loc_t>&, const std::vector<std::string>&);
+void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::map<std::string, loc_t>&, const std::vector<std::string>&);
 
 
 
