@@ -85,8 +85,6 @@ int main()
 
 	/* start building the associative map */
 	loc_t				r0={0,0}; 				// agent's initial position
-	loc_t				r1=r0;
-	orient_t 			theta=North;			// agent's orientation
 	scan_direction_t	scan_sense = SE;		// initial scanning sense
 	loc_t				rA=r0;					// upper left corner of search space
 	loc_t				rB={Nx-1, Ny-1};		// bottom right corner of search space

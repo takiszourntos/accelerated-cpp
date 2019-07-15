@@ -129,7 +129,7 @@ void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vect
  * 		parameters: the agent's location, the associative map, the physical map, and the landmark locations
  * 		returns:	nothing (changes are made to the associative map)
  */
-void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&);
+void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&, const std::vector<std::string>&);
 
 
 

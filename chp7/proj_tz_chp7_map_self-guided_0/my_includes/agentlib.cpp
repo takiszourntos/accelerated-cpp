@@ -64,9 +64,11 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 	gsl_vector_set(p_ag, 1, (double) r0.Y); // set Y-position of agent
 	gsl_vector *err = gsl_vector_alloc(2); // "error" vector pointing from agent to landmark
 
-	double size_err, dotp, acosN, acosE, acosS, acosW; // basic calculation storage
+	double size_err, dotp; // basic calculation storage
 
 	std::string keylm, context;
+	std::vector<dprec_t> dotprods; // store dot products and directions here
+	std::vector<dprec_t>::const_iterator iter = dotprods.begin();
 	// lm_iter points to landmark to be checked w.r.t. this location (r0) of the agent
 	while (lm_iter != landmarks.end())
 	{
@@ -89,8 +91,6 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 			gsl_vector_scale(err, 1/size_err); // re-scale err so that it is a unit vector
 			double Xe = gsl_vector_get(err, 0);
 			double Ye = gsl_vector_get(err, 1);
-			std::vector<dprec_t> dotprods; // store dot products and directions here
-			std::vector<dprec_t>::const_iterator iter = dotprods.begin();
 			dprec_t dpvar; // temporary storage here
 
 			if ( (Xe >= 0) && (Ye >= 0) )
@@ -138,6 +138,7 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		keylm=lm_iter->first; // name of current landmark
 		context+=keylm + orient_str[iter->dir];
 		++lm_iter; // point to next landmark in container
+		dotprods.clear(); iter = dotprods.begin();
 	}
 	// add to spatial_mem, but what?
 	if (spatial_mem.find(context) != spatial_mem.end())
@@ -161,7 +162,7 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 /*
  * scan (physical space) function
  */
-void scan(bool& done, const scan_direction_t dir, loc_t rA, loc_t rB, loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::vector<loc_t>& landmarks)
+void scan(bool& done, const scan_direction_t dir, loc_t rA, loc_t rB, loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::vector<loc_t>& landmarks, const std::vector<std::string>& orient_str)
 {
 	if ( ((dir==SE) && ((r0.X==rB.X) && (r0.Y==rB.Y))) || ((dir==NW) && ((r0.X==rA.X) && (r0.Y==rA.Y)))  )
 	{
@@ -208,11 +209,11 @@ void scan(bool& done, const scan_direction_t dir, loc_t rA, loc_t rB, loc_t r0, 
 			r1.X = rB.X + offsetX;
 			r1.Y = rB.Y + offsetY;
 		}
-		scan(done, dir, rA, rB, r1, spatial_mem, physmap, landmarks); // R-E-C-U-R-S-I-O-N
+		scan(done, dir, rA, rB, r1, spatial_mem, physmap, landmarks, orient_str); // R-E-C-U-R-S-I-O-N
 	}
 	else // (done=true) mapping process is finished (in the sense that all points have been visited)
 	{
-		agentScan360(r0, spatial_mem, physmap, landmarks); // perform a scan at point r0
+		agentScan360(r0, spatial_mem, physmap, landmarks, orient_str); // perform a scan at point r0
 	}
 	return;
 }
