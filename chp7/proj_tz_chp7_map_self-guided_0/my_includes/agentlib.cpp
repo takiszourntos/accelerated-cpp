@@ -48,6 +48,17 @@ bool maxdp(dprec_t A, dprec_t B)
 	return ret;
 }
 
+/*
+ * load the global map with file data
+ */
+void loadGlobalMapwithFileData(std::map<std::string, region_t>& gmap, const std::vector<read_data_t>& mapdata)
+{
+	for (std::vector<read_data_t>::size_type i=0; i != mapdata.size(); ++i)
+	{
+		gmap[mapdata[i].context] = mapdata[i].region; // insert the feature into global_map
+	}
+}
+
 
 /*
  * scan 360 (at a fixed point in space) function
@@ -149,12 +160,18 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		// and median the results...
 		std::map<std::string, region_t>::iterator sp_iter=spatial_mem.begin();
 		closest = sp_iter->first; // closest will contain the string closest to context
-		int closeness=0;
+		int closeness=0; // closeness is this if the strings match exactly
+
+		// check for the number of substring matches... take each legit substring from
+		// context and scan each key; total up the number of matches, and the key with
+		// the greatest number of substring matches will be the closest key--- use that
+		// key's value as the value for this new context (key)
+
 		while (sp_iter != spatial_mem.end())
 		{
 			if str_compare
 		}
-	}
+	} // if the context is in the spatial memory, no need to add it again!
 	return;
 }
 

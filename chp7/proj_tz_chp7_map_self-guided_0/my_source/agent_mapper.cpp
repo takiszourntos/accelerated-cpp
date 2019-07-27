@@ -32,7 +32,7 @@ using std::cin;				using std::endl;
 int main()
 {
 	map<string, region_t>		global_map;
-	bool						mappingfinished=false;	// flag indicating completion of associative map;
+	bool						mappingfinished=false;	// global flag indicating completion of associative map;
 	vector<string> orient_str; // strings corresponding to eight orient_t directions
 	orient_str.push_back("No"); orient_str.push_back("NE");
 	orient_str.push_back("Ea"); orient_str.push_back("SE");
