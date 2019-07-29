@@ -27,6 +27,7 @@
 #define		MaxIterations	9999	// maximum number of times main mapping loop can execute
 #define		SenseRange		75		// units of distance that the agent can "see"
 #define		MinVectorNorm	0.01	// a landmark must be further away than 1 cm from the agent
+#define		MATSIZE			8		// matrix dimension (MATSIZE x MATSIZE) for analysis
 
 /********************************************************************************************************
  * 											TYPEDEFs

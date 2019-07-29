@@ -61,6 +61,33 @@ void loadGlobalMapwithFileData(std::map<std::string, region_t>& gmap, const std:
 
 
 /*
+ * returns the rotation matrix we need, T_k, where k=0,+/-1,+/-2,...
+ */
+gsl_matrix_ushort *matTr(int k)
+{
+	if (k==0)
+	{
+		gsl_matrix_ushort *T0 = gsl_matrix_alloc(MATSIZE, MATSIZE);
+		gsl_matrix_ushort_set_identity(T0);
+		return T0;
+	}
+	else if (k>0)
+	{
+		gsl_matrix_ushort *Tp1 = gsl_matrix_alloc(MATSIZE, MATSIZE);
+		gsl_matrix_ushort_set_zero(Tp1);
+		// set superdiagonal elements to 1, and first element of last row to 1
+		for (int i=0;i!=k )
+		{
+
+		}
+	}
+	else if (k<0)
+	{
+
+	}
+}
+
+/*
  * scan 360 (at a fixed point in space) function
  */
 void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::map<std::string, loc_t>& landmarks, const std::vector<std::string>& orient_str)
@@ -78,7 +105,7 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 	double size_err, dotp; // basic calculation storage
 
 	std::string keylm, context;
-	std::vector<dprec_t> dotprods; // store dot products and directions here
+	std::vector<dprec_t> dotprods; // store three dprec_t elements here, corresponding to the Quadrant we're in (see below)
 	std::vector<dprec_t>::const_iterator iter = dotprods.begin();
 	// lm_iter points to landmark to be checked w.r.t. this location (r0) of the agent
 	while (lm_iter != landmarks.end())
@@ -88,7 +115,7 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		gsl_vector_set(p_lm, 0, Xlm); // set first element of p_lm
 		gsl_vector_set(p_lm, 1, Ylm); // set second element of p_lm
 
-		orient_t lmdir; // direction of landmark relative to agent (or result for each for-loop iteration)
+		orient_t lmdir; // direction of landmark relative to agent (or result for each loop iteration)
 
 		gsl_vector_memcpy(err, p_lm); // copy p_lm into err, to prepare for subtraction
 		gsl_vector_sub(err, p_ag); // compute p_lm - p_ag, store the result in err
@@ -150,8 +177,14 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		context+=keylm + orient_str[iter->dir];
 		++lm_iter; // point to next landmark in container
 		dotprods.clear(); iter = dotprods.begin();
-	}
-	// add to spatial_mem, but what?
+	} // end: while (lm_iter != landmarks.end())
+
+	// Now, add context to spatial_mem, but what should the value be for this context string?
+	// Recall that if landmarks A, C and E are in sensor range and happen to be
+	// in the directions (relative to the agent's position, facing North) of North,
+	// South-East and East, respectively, then context = "ANoCSEEEa"
+	// (anoxia is a word, BTW)
+	//
 	if (spatial_mem.find(context) != spatial_mem.end())
 	{
 		// this context has not been experienced before
@@ -161,6 +194,11 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		std::map<std::string, region_t>::iterator sp_iter=spatial_mem.begin();
 		closest = sp_iter->first; // closest will contain the string closest to context
 		int closeness=0; // closeness is this if the strings match exactly
+
+		gsl_matrix_ushort *M1, *M2; // matrices to represent agent's context and existing context in global map, respectively
+		gsl_matrix_ushort *T0=gsl_matrix_alloc(MATSIZE, MATSIZE);
+		gsl_matrix_ushort_set_identity(T0);
+
 
 		// check for the number of substring matches... take each legit substring from
 		// context and scan each key; total up the number of matches, and the key with
