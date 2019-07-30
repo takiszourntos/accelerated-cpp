@@ -61,29 +61,54 @@ void loadGlobalMapwithFileData(std::map<std::string, region_t>& gmap, const std:
 
 
 /*
- * returns the rotation matrix we need, T_k, where k=0,+/-1,+/-2,...
+ * returns the transformation matrix we need, T_k, where k=0,+/-1,+/-2,...
  */
-gsl_matrix_ushort *matTr(int k)
+gsl_matrix_float *matTr(int k)
 {
 	if (k==0)
 	{
-		gsl_matrix_ushort *T0 = gsl_matrix_alloc(MATSIZE, MATSIZE);
-		gsl_matrix_ushort_set_identity(T0);
+		gsl_matrix_float *T0 = gsl_matrix_alloc(MATSIZE, MATSIZE);
+		gsl_matrix_float_set_identity(T0);
 		return T0;
 	}
 	else if (k>0)
 	{
-		gsl_matrix_ushort *Tp1 = gsl_matrix_alloc(MATSIZE, MATSIZE);
-		gsl_matrix_ushort_set_zero(Tp1);
-		// set superdiagonal elements to 1, and first element of last row to 1
-		for (int i=0;i!=k )
-		{
+		gsl_matrix_float *Tp1 = gsl_matrix_alloc(MATSIZE, MATSIZE); // T_{+1}
+		gsl_matrix_float_set_zero(Tp1);			// most elements are zero
+		gsl_matrix_float_set(Tp1, MATSIZE-1, 1, 1.0); 	// put a leading 1 in the last row
 
+		// set super-diagonal elements to 1
+		for (int i=0;i!=(k-1);++i)
+		{
+			gsl_matrix_float_set(Tp1, i, (i+1), 1.0); // put a 1 in @ (i, i+1); i = 0, 1, ..., (k-2)
 		}
+
+		gsl_matrix_float *Tpk = Tp1;
+		// multiply this matrix with itself k-1 times
+		for (int i=1;i!=k; ++i)
+		{
+			gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Tpk, Tp1, 0.0, Tpk);
+		}
+		return Tpk;
 	}
 	else if (k<0)
 	{
-
+		k=-k; // make it positive for the rest of our work
+		gsl_matrix_float *Tm1 = gsl_matrix_alloc(MATSIZE, MATSIZE); // T_{-1}
+		gsl_matrix_float_set_zero(Tm1);			// most elements are zero
+		gsl_matrix_float_set(Tm1, 1, MATSIZE-1, 1.0); 	// put a trailing 1 in the first row
+		// set sub-diagonal elements to 1
+		for (int i=1;i!=k;++i)
+		{
+			gsl_matrix_float_set(Tm1, i, (i-1), 1.0); // put a 1 in @ (i, i-1); i = 1, 2, ..., (k-1)
+		}
+		gsl_matrix_float *Tmk = Tm1;
+		// multiply this matrix with itself k-1 times
+		for (int i=1;i!=k; ++i)
+		{
+			gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Tmk, Tm1, 0.0, Tmk);
+		}
+		return Tmk;
 	}
 }
 
@@ -179,7 +204,7 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		dotprods.clear(); iter = dotprods.begin();
 	} // end: while (lm_iter != landmarks.end())
 
-	// Now, add context to spatial_mem, but what should the value be for this context string?
+	// Now, add context to spatial_mem, but what should the value (region_t) be for this context string?
 	// Recall that if landmarks A, C and E are in sensor range and happen to be
 	// in the directions (relative to the agent's position, facing North) of North,
 	// South-East and East, respectively, then context = "ANoCSEEEa"
@@ -195,9 +220,8 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		closest = sp_iter->first; // closest will contain the string closest to context
 		int closeness=0; // closeness is this if the strings match exactly
 
-		gsl_matrix_ushort *M1, *M2; // matrices to represent agent's context and existing context in global map, respectively
-		gsl_matrix_ushort *T0=gsl_matrix_alloc(MATSIZE, MATSIZE);
-		gsl_matrix_ushort_set_identity(T0);
+		gsl_matrix_float *M1, *M2; // matrices to represent agent's context and existing context in global map, respectively
+		gsl_matrix_float_set_identity(T0);
 
 
 		// check for the number of substring matches... take each legit substring from
