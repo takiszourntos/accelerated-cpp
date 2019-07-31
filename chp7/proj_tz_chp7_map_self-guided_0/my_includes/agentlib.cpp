@@ -113,6 +113,36 @@ gsl_matrix_float *matTr(int k)
 }
 
 /*
+ * convert a context string to a matrix for analysis
+ */
+gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string)
+{
+	std::string::size_type csi=0;
+	std::string data_lm;	// stores the information associated with a landmark
+	std::string lm_name; // the landmark identifier
+	std::string lm_rd;	// the relative direction of the landmark relative to the agent
+
+	// invariant: citer points to the substring to be processed
+	while (csi != context_string.length())
+	{
+		// take three characters
+		data_lm = context_string.substr(csi, 3);
+
+		// determine landmark
+		lm_name = data_lm.substr(1,1);
+		switch lm_name
+		{
+
+		}
+
+		data_lm.clear(); // empty the string variable
+		csi += 3;
+
+	}
+}
+
+
+/*
  * scan 360 (at a fixed point in space) function
  */
 void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const vvs_t& physmap, const std::map<std::string, loc_t>& landmarks, const std::vector<std::string>& orient_str)
@@ -221,7 +251,8 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		int closeness=0; // closeness is this if the strings match exactly
 
 		gsl_matrix_float *M1, *M2; // matrices to represent agent's context and existing context in global map, respectively
-		gsl_matrix_float_set_identity(T0);
+		M1 = convertContextStringtoMatrix(context); // M1 represents the agent's current context
+		M2 = convertContextStringtoMatrix(closest); // M2 represents a context string stored in spatial_mem, under consideration
 
 
 		// check for the number of substring matches... take each legit substring from
