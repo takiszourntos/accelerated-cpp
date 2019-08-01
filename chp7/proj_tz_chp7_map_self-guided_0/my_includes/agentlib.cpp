@@ -182,15 +182,19 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 /*
  * compare context matrices, return the closeness value
  */
-float	compareContexts(gsl_matrix_float* A, gsl_matrix_float* B)
+float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 {
-	gsl_matrix_float *Ti, *Ti_inv;
+	gsl_matrix_float *Ti, *TiB, *TiBmA;
+	float norm_TiBmA;
 
-	// find arg min \| T_i^{-1}*B*T_i - A \|, for i=-3,-2,-1,0,1,2,3;
+	// find arg min \| T_i*B - A \|, for i=-3,-2,-1,0,1,2,3;
 	for (int i=-3; i!=-4; ++i)
 	{
 		Ti 		= matTr(i);
-		Ti_inv 	= gsl_matrix_float_transpose(Ti);
+		TiB		= B;
+		gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Ti, B, 0.0, TiB);
+		TiBmA	= TiB;
+		gsl_matrix_float_sub(TiBmA, A);
 
 	}
 

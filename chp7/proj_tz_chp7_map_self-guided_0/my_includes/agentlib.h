@@ -157,7 +157,7 @@ gsl_matrix_float *matTr(int);
  * 		parameters:	two matrices to be compared, of type gsl_matrix_float*
  * 		returns:	a closeness value, the greater, the closer the matrices are
  */
-float	compareContexts(gsl_matrix_float*, gsl_matrix_float*);
+float	compareContexts(const gsl_matrix_float*, const gsl_matrix_float*);
 
 
 /*
