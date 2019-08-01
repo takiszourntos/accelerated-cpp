@@ -119,8 +119,12 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 {
 	std::string::size_type csi=0;
 	std::string data_lm;	// stores the information associated with a landmark
-	std::string lm_name; // the landmark identifier
-	std::string lm_rd;	// the relative direction of the landmark relative to the agent
+	std::string lm_name;	// the landmark identifier
+	std::string lm_rd;		// the relative direction of the landmark relative to the agent
+
+	gsl_matrix_float *M = gsl_matrix_float_alloc(MATSIZE, MATSIZE); // the matrix the function will return
+	gsl_matrix_float_set_zero(M); // initialize matrix to zero
+	int row_lm, col_lm;
 
 	// invariant: citer points to the substring to be processed
 	while (csi != context_string.length())
@@ -129,18 +133,68 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 		data_lm = context_string.substr(csi, 3);
 
 		// determine landmark
-		lm_name = data_lm.substr(1,1);
-		switch lm_name
+		lm_name = data_lm.substr(1,1); // grab first character of data_lm
+		switch (lm_name)
 		{
-
+			case "A":
+				col_lm = 0;
+			case "B":
+				col_lm = 1;
+			case "C":
+				col_lm = 2;
+			case "D":
+				col_lm = 3;
+			case "E":
+				col_lm = 4;
+			default:
+				col_lm = -1; // error
 		}
 
+		lm_rd = data_lm.substr(2, 2); // grab next two characters of data_lm
+		switch (lm_rd)
+		{
+			case "No":
+				row_lm = 0;
+			case "NE":
+				row_lm = 1;
+			case "Ea":
+				row_lm = 2;
+			case "SE":
+				row_lm = 3;
+			case "So":
+				row_lm = 4;
+			case "SW":
+				row_lm = 5;
+			case "We":
+				row_lm = 6;
+			case "NW":
+				row_lm = 7;
+			default:
+				row_lm = -1; // error
+		}
+		gsl_matrix_float_set(M, row_lm, col_lm, 1);
 		data_lm.clear(); // empty the string variable
 		csi += 3;
-
 	}
+	return M;
 }
 
+/*
+ * compare context matrices, return the closeness value
+ */
+float	compareContexts(gsl_matrix_float* A, gsl_matrix_float* B)
+{
+	gsl_matrix_float *Ti, *Ti_inv;
+
+	// find arg min \| T_i^{-1}*B*T_i - A \|, for i=-3,-2,-1,0,1,2,3;
+	for (int i=-3; i!=-4; ++i)
+	{
+		Ti 		= matTr(i);
+		Ti_inv 	= gsl_matrix_float_transpose(Ti);
+
+	}
+
+}
 
 /*
  * scan 360 (at a fixed point in space) function
@@ -247,19 +301,14 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		// "closest" (by key sorting) to this context
 		// and median the results...
 		std::map<std::string, region_t>::iterator sp_iter=spatial_mem.begin();
-		closest = sp_iter->first; // closest will contain the string closest to context
-		int closeness=0; // closeness is this if the strings match exactly
+		std::string closest = sp_iter->first; // closest will contain the string closest to context
 
 		gsl_matrix_float *M1, *M2; // matrices to represent agent's context and existing context in global map, respectively
 		M1 = convertContextStringtoMatrix(context); // M1 represents the agent's current context
 		M2 = convertContextStringtoMatrix(closest); // M2 represents a context string stored in spatial_mem, under consideration
+		float closeness=compareContexts(M1, M2); // closeness is zero if matrices match exactly
 
-
-		// check for the number of substring matches... take each legit substring from
-		// context and scan each key; total up the number of matches, and the key with
-		// the greatest number of substring matches will be the closest key--- use that
-		// key's value as the value for this new context (key)
-
+		// calculate how close these two matrices are
 		while (sp_iter != spatial_mem.end())
 		{
 			if str_compare

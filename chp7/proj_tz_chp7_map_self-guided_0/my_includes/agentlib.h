@@ -17,6 +17,13 @@
 #include <string>
 #include <fstream>
 
+// my own includes
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_math.h>
+#include <math.h>
+
+
+
 /********************************************************************************************************
  * 											MACROS
  * ******************************************************************************************************
@@ -94,6 +101,7 @@ struct dprec_t // define a type to store dot products and corresponding directio
  * ******************************************************************************************************
  */
 
+
 /*
  * 		function: 	sgn
  * 		purpose:	determines the sign of a double variable
@@ -102,6 +110,7 @@ struct dprec_t // define a type to store dot products and corresponding directio
  *
  */
 short int	sgn(double);
+
 
 /*
  * 		function: 	load_known_contexts_from_file
@@ -112,6 +121,7 @@ short int	sgn(double);
  */
 std::vector<read_data_t> loadKnownContextsfromFile(const std::string);
 
+
 /*
  * 		function: 	load_global_map_with_file_data
  * 		purpose:	fills contextual/associative map data structure with information in vector of read_data_t elements
@@ -120,6 +130,34 @@ std::vector<read_data_t> loadKnownContextsfromFile(const std::string);
  *
  */
 void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vector<read_data_t>&);
+
+
+/*
+ * 		function: 	convertContextStringtoMatrix
+ * 		purpose:	takes a key string associated with the spatial associative map, and converts it into a matrix
+ * 		parameters:	the context string
+ * 		returns:	a matrix (of type gsl_matrix_float*)
+ */
+gsl_matrix_float *convertContextStringtoMatrix(const std::string&);
+
+
+/*
+ * 		function: 	matTr
+ * 		purpose: 	yields the transformation matrix we need, T_k, where k=0,+/-1,+/-2,...
+ * 		parameters:	an integer (k)
+ * 		returns:	a matrix of type gsl_matrix_float*
+ *
+ */
+gsl_matrix_float *matTr(int);
+
+
+/*
+ * 		function:	compareContexts
+ * 		purpose:	compare context matrices, return the closeness value
+ * 		parameters:	two matrices to be compared, of type gsl_matrix_float*
+ * 		returns:	a closeness value, the greater, the closer the matrices are
+ */
+float	compareContexts(gsl_matrix_float*, gsl_matrix_float*);
 
 
 /*
@@ -133,7 +171,6 @@ void loadGlobalMapwithFileData(std::map<std::string, region_t>&, const std::vect
 void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::vector<loc_t>&, const std::vector<std::string>&);
 
 
-
 /*
  * 		function:	scan
  * 		purpose:	survey a rectangular subset of 2D space, either in a SE or a NW sense, using recursion
@@ -142,7 +179,6 @@ void agentScan360(loc_t, std::map<std::string, region_t>&, const vvs_t&, const s
  * 		returns: 	nothing (void type, but changes are made to the spatial memory, a.k.a., the associate map)
  */
 void scan(bool& done, const scan_direction_t, loc_t, loc_t, loc_t, std::map<std::string, region_t>&, const vvs_t&, const std::map<std::string, loc_t>&, const std::vector<std::string>&);
-
 
 
 #endif /* MY_INCLUDES_AGENTLIB_H_ */
