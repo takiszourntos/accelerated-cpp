@@ -224,7 +224,7 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
  */
 float alphaK(const float x)
 {
-
+	return (float) exp(-x);
 }
 
 /*
@@ -242,10 +242,10 @@ float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 	{
 		Ti 		= matTr(i);
 		TiB		= B;
-		gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Ti, B, 0.0, TiB);
+		gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Ti, B, 0.0, TiB); // Ti B -> TiB
 		TiBmA	= TiB;
-		gsl_matrix_float_sub(TiBmA, A);
-		norm_TiBmA = mat2Norm(TiBmA);
+		gsl_matrix_float_sub(TiBmA, A); // Ti B - A -> TiBmA
+		norm_TiBmA = mat2Norm(TiBmA); // \| TiBmA \|
 		if (min_val > norm_TiBmA)
 		{
 			min_val = norm_TiBmA;
@@ -253,7 +253,7 @@ float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 		}
 	}
 	// min_val is the smallest it can be (as it should be)
-	return sqrt(pow(alphaK(arg_min),2) + pow(alphaK(min_val),2));
+	return sqrt(pow(alphaK(arg_min),2) + pow(alphaK(min_val),2)); // the closer the contexts are, the bigger this number is
 }
 
 
@@ -363,17 +363,28 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		// and median the results...
 		std::map<std::string, region_t>::iterator sp_iter=spatial_mem.begin();
 		std::string closest = sp_iter->first; // closest will contain the string closest to context
+		std::string candstring; // "candidate" string for the closest honour...
 
 		gsl_matrix_float *M1, *M2; // matrices to represent agent's context and existing context in global map, respectively
 		M1 = convertContextStringtoMatrix(context); // M1 represents the agent's current context
-		M2 = convertContextStringtoMatrix(closest); // M2 represents a context string stored in spatial_mem, under consideration
-		float closeness=compareContexts(M1, M2); // closeness is zero if matrices match exactly
+		float closeness=0; // closeness is maximized if matrices match exactly; closeness = 0 means the contexts could not be more dissimilar!
+		region_t closest_region=R0;
 
 		// calculate how close these two matrices are
 		while (sp_iter != spatial_mem.end())
 		{
-			if str_compare
+			candstring = sp_iter->first;
+			M2 = convertContextStringtoMatrix(candstring);
+			float checkval = compareContexts(M1, M2);
+			if (checkval > closeness)
+			{
+				closeness = checkval;
+				closest = candstring;
+				closest_region = sp_iter->second;
+			}
+			++sp_iter;
 		}
+		spatial_mem[context] = closest_region;
 	} // if the context is in the spatial memory, no need to add it again!
 	return;
 }

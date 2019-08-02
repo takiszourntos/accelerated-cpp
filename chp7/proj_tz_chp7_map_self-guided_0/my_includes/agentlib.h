@@ -171,6 +171,15 @@ float	compareContexts(const gsl_matrix_float*, const gsl_matrix_float*);
 
 
 /*
+ * 		function: 	alphaK
+ * 		purpose:	implements a continuous monotonically decreasing function
+ * 		parameters: a real number, x (float)
+ * 		returns:	(float) exp(-x)
+ */
+float alphaK(const float);
+
+
+/*
  * 		function:	agentScan360
  * 		purpose:	at a fixed position (loc_t, first parameter) in the physical environment, deduce the context string,
  * 					which consists of relative position data, e.g., lm_A to East, lm_B to SW, to be identified
