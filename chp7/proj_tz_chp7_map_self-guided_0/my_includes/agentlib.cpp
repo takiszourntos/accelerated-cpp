@@ -18,6 +18,7 @@
 #include <math.h>
 #include "agentlib.h"
 
+
 /*
  * sgn(x) function, one of my favourites!
  */
@@ -35,6 +36,7 @@ short int	sgn(double x)
 	return y;
 }
 
+
 /*
  * max
  */
@@ -48,6 +50,7 @@ bool maxdp(dprec_t A, dprec_t B)
 	return ret;
 }
 
+
 /*
  * load the global map with file data
  */
@@ -59,21 +62,43 @@ void loadGlobalMapwithFileData(std::map<std::string, region_t>& gmap, const std:
 	}
 }
 
+/*
+ * compute the 2-norm of a matrix from the definition on page 291 of
+ * Matrix Analysis, Horn & Johnson
+ */
+float mat2Norm(const gsl_matrix_float *A)
+{
+	int n = A->size1; // retrieve number of rows in A
+	int m = A->size2; // retrieve number of columns in A
+	float sum=0;
+
+	for (int i=0; i != n; ++i)
+	{
+		for (int j=0; j != m; ++j)
+		{
+			sum += (float) pow(gsl_matrix_float_get(A, i, j), 2);
+		}
+	}
+	return sqrt(sum);
+}
+
 
 /*
  * returns the transformation matrix we need, T_k, where k=0,+/-1,+/-2,...
  */
 gsl_matrix_float *matTr(int k)
 {
+	gsl_matrix_float *retM = gsl_matrix_float_calloc(MATSIZE, MATSIZE); // allocate a ZERO matrix
+
 	if (k==0)
 	{
-		gsl_matrix_float *T0 = gsl_matrix_alloc(MATSIZE, MATSIZE);
+		gsl_matrix_float *T0 = gsl_matrix_float_alloc(MATSIZE, MATSIZE);
 		gsl_matrix_float_set_identity(T0);
 		return T0;
 	}
 	else if (k>0)
 	{
-		gsl_matrix_float *Tp1 = gsl_matrix_alloc(MATSIZE, MATSIZE); // T_{+1}
+		gsl_matrix_float *Tp1 = gsl_matrix_float_alloc(MATSIZE, MATSIZE); // T_{+1}
 		gsl_matrix_float_set_zero(Tp1);			// most elements are zero
 		gsl_matrix_float_set(Tp1, MATSIZE-1, 1, 1.0); 	// put a leading 1 in the last row
 
@@ -89,12 +114,12 @@ gsl_matrix_float *matTr(int k)
 		{
 			gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Tpk, Tp1, 0.0, Tpk);
 		}
-		return Tpk;
+		retM=Tpk;
 	}
 	else if (k<0)
 	{
 		k=-k; // make it positive for the rest of our work
-		gsl_matrix_float *Tm1 = gsl_matrix_alloc(MATSIZE, MATSIZE); // T_{-1}
+		gsl_matrix_float *Tm1 = gsl_matrix_float_alloc(MATSIZE, MATSIZE); // T_{-1}
 		gsl_matrix_float_set_zero(Tm1);			// most elements are zero
 		gsl_matrix_float_set(Tm1, 1, MATSIZE-1, 1.0); 	// put a trailing 1 in the first row
 		// set sub-diagonal elements to 1
@@ -108,9 +133,11 @@ gsl_matrix_float *matTr(int k)
 		{
 			gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Tmk, Tm1, 0.0, Tmk);
 		}
-		return Tmk;
+		retM=Tmk;
 	}
+	return retM;
 }
+
 
 /*
  * convert a context string to a matrix for analysis
@@ -138,14 +165,19 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 		{
 			case "A":
 				col_lm = 0;
+				break;
 			case "B":
 				col_lm = 1;
+				break;
 			case "C":
 				col_lm = 2;
+				break;
 			case "D":
 				col_lm = 3;
+				break;
 			case "E":
 				col_lm = 4;
+				break;
 			default:
 				col_lm = -1; // error
 		}
@@ -155,20 +187,28 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 		{
 			case "No":
 				row_lm = 0;
+				break;
 			case "NE":
 				row_lm = 1;
+				break;
 			case "Ea":
 				row_lm = 2;
+				break;
 			case "SE":
 				row_lm = 3;
+				break;
 			case "So":
 				row_lm = 4;
+				break;
 			case "SW":
 				row_lm = 5;
+				break;
 			case "We":
 				row_lm = 6;
+				break;
 			case "NW":
 				row_lm = 7;
+				break;
 			default:
 				row_lm = -1; // error
 		}
@@ -180,12 +220,22 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 }
 
 /*
+ * alphaK is a continuous monotonically decreasing function
+ */
+float alphaK(const float x)
+{
+
+}
+
+/*
  * compare context matrices, return the closeness value
  */
 float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 {
 	gsl_matrix_float *Ti, *TiB, *TiBmA;
 	float norm_TiBmA;
+	float min_val=sqrt(MATSIZE*MATSIZE); // set to maximum possible matrix 2-norm
+	float arg_min=0;
 
 	// find arg min \| T_i*B - A \|, for i=-3,-2,-1,0,1,2,3;
 	for (int i=-3; i!=-4; ++i)
@@ -195,10 +245,17 @@ float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 		gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Ti, B, 0.0, TiB);
 		TiBmA	= TiB;
 		gsl_matrix_float_sub(TiBmA, A);
-
+		norm_TiBmA = mat2Norm(TiBmA);
+		if (min_val > norm_TiBmA)
+		{
+			min_val = norm_TiBmA;
+			arg_min = i;
+		}
 	}
-
+	// min_val is the smallest it can be (as it should be)
+	return sqrt(pow(alphaK(arg_min),2) + pow(alphaK(min_val),2));
 }
+
 
 /*
  * scan 360 (at a fixed point in space) function

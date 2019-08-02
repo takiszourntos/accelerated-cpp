@@ -142,6 +142,16 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string&);
 
 
 /*
+ * 		function:	mat2Norm
+ * 		purpose:	compute the 2-norm of a matrix from the definition on page 291 of
+ * 					Matrix Analysis, Horn & Johnson
+ * 		parameters:	a matrix of type gsl_matrix_float*
+ * 		returns:	the matrix 2-norm value
+ */
+float mat2Norm(const gsl_matrix_float);
+
+
+/*
  * 		function: 	matTr
  * 		purpose: 	yields the transformation matrix we need, T_k, where k=0,+/-1,+/-2,...
  * 		parameters:	an integer (k)
