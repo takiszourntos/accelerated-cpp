@@ -64,20 +64,19 @@ int main()
 	loc_t				lmC = {85, 7};	v_lm.push_back(lmC);
 	loc_t				lmD = {3, 90};	v_lm.push_back(lmD);
 	loc_t				lmE = {80, 83};	v_lm.push_back(lmE);
-
-	map<string, loc_t> 	m_lm;	// container of landmarks with key-location relationship
+	map<char, loc_t> 	m_lm;	// container of landmarks with key-location relationship
 	string::const_iterator siter=lm_labels.begin();		// iterator for landmarks string
-
 	if ( lm_labels.size() < (string::size_type) v_lm.size() )
 	{
 		cout << "Error--- there are more landmarks than landmark labels!" << endl;
 		return 1; // provide an error code
 	}
-	vector<loc_t>::size_type i=0;
+
+	vector<loc_t>::size_type i=0; // index to landmark locations
 	// invariant: siter points to the next landmark to be incorporated into our little key-landmark container
 	while (siter != lm_labels.end())
 	{
-		m_lm[*siter]=v_lm[i];
+		m_lm[*siter]=v_lm[i]; // de-reference a string iterator produces a char-type value (*siter)
 		physenv[v_lm[i].X][v_lm[i].Y]=*siter;
 		++i;
 		++siter;
@@ -88,7 +87,8 @@ int main()
 	scan_direction_t	scan_sense = SE;		// initial scanning sense
 	loc_t				rA=r0;					// upper left corner of search space
 	loc_t				rB={Nx-1, Ny-1};		// bottom right corner of search space
-	scan(mappingfinished, scan_sense, rA, rB, r0, global_map, physenv, m_lm, orient_str);
+	scan(mappingfinished, scan_sense, 					rA, 		rB, 		r0, 		global_map, 									physenv, 				m_lm, 									orient_str);
+//  scan(bool& done,      const scan_direction_t dir, 	loc_t rA, 	loc_t rB, 	loc_t r0, 	std::map<std::string, region_t>& spatial_mem, 	const vvs_t& physmap, 	const std::map<char, loc_t>& landmarks, const std::vector<std::string>& orient_str)
 
 	return 0;
 }

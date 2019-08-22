@@ -17,7 +17,7 @@ CPP_DEPS += \
 my_includes/%.o: ../my_includes/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -I"/home/takis/Identities/proftakis/accelerated-cpp/chp7/proj_tz_chp7_map_self-guided_0/my_includes" -I/usr/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -I"/home/takis/Identities/takiszourntos/accelerated-cpp/chp7/proj_tz_chp7_map_self-guided_0/my_includes" -I/usr/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
