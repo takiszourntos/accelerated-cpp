@@ -146,7 +146,7 @@ gsl_matrix_float *convertContextStringtoMatrix(const std::string& context_string
 {
 	std::string::size_type csi=0;
 	std::string data_lm;	// stores the information associated with a landmark
-	std::string lm_name;	// the landmark identifier
+	char lm_name;	// the landmark identifier
 	std::string lm_rd;		// the relative direction of the landmark relative to the agent
 
 	gsl_matrix_float *M = gsl_matrix_float_alloc(MATSIZE, MATSIZE); // the matrix the function will return
@@ -234,6 +234,7 @@ float alphaK(const float x)
 float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 {
 	gsl_matrix_float *Ti, *TiB, *TiBmA;
+
 	float norm_TiBmA;
 	float min_val=sqrt(MATSIZE*MATSIZE); // set to maximum possible matrix 2-norm
 	float arg_min=0;
@@ -242,9 +243,9 @@ float	compareContexts(const gsl_matrix_float* A, const gsl_matrix_float* B)
 	for (int i=-3; i!=-4; ++i)
 	{
 		Ti 		= matTr(i);
-		TiB		= B;
+		gsl_matrix_float_memcpy(TiB, B); // TiB = B;
 		gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, Ti, B, 0.0, TiB); // Ti B -> TiB
-		TiBmA	= TiB;
+		gsl_matrix_float_memcpy(TiBmA, TiB); // TiBmA	= TiB;
 		gsl_matrix_float_sub(TiBmA, A); // Ti B - A -> TiBmA
 		norm_TiBmA = mat2Norm(TiBmA); // \| TiBmA \|
 		if (min_val > norm_TiBmA)
@@ -273,7 +274,7 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 	gsl_vector_set(p_ag, 1, (double) r0.Y); // set Y-position of agent
 	gsl_vector *err = gsl_vector_alloc(2); // "error" vector pointing from agent to landmark
 
-	double size_err, dotp; // basic calculation storage
+	double size_err; // basic calculation storage
 
 	std::string keylm, context;
 	std::vector<dprec_t> dotprods; // store three dprec_t elements here, corresponding to the Quadrant we're in (see below)
@@ -285,8 +286,6 @@ void agentScan360(loc_t r0, std::map<std::string, region_t>& spatial_mem, const 
 		Ylm = (double) (lm_iter->second).Y; // landmark's Y position
 		gsl_vector_set(p_lm, 0, Xlm); // set first element of p_lm
 		gsl_vector_set(p_lm, 1, Ylm); // set second element of p_lm
-
-		orient_t lmdir; // direction of landmark relative to agent (or result for each loop iteration)
 
 		gsl_vector_memcpy(err, p_lm); // copy p_lm into err, to prepare for subtraction
 		gsl_vector_sub(err, p_ag); // compute p_lm - p_ag, store the result in err
