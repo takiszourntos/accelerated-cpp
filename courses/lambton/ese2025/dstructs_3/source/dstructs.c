@@ -106,7 +106,7 @@ ll_t*  find_largest(const ll_t *head, int *max)
  *		0 ----> B ----> A ----> 1
  *                 p2B     p2A     p21
  *
- *       	returning p0
+ *       	returning p2B
  *
  */
 
