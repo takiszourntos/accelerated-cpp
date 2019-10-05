@@ -19,7 +19,7 @@
  */
 ll_t* createNode()
 {
-	/* create a pointer for the new node */
+    /* create a pointer for the new node */
     ll_t *node;
 
     /* allocate the node from heap */
@@ -42,11 +42,11 @@ ll_t* createNode()
  */
 ll_t* addNode(ll_t* head, int value)
 {
-	/* create two node pointers */
+    /* create two node pointers */
     ll_t *node;
     ll_t *p;
 
-	/* prepare the new node to be added */
+    /* prepare the new node to be added */
     node = createNode();
     node -> data = value; /* set the new element's data field to value */
 
