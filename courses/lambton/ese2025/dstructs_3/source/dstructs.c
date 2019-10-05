@@ -132,8 +132,8 @@ void printList(ll_t* head)
 	ll_t* pW = head; /* our working pointer */
 	while (pW != NULL)
 	{
-		printf("%d ", pW -> data);
-		pW = pW -> pNext;
+	      printf("%d ", pW -> data);
+	      pW = pW -> pNext;
 	}
 	printf("\n");
 	return;
@@ -166,21 +166,21 @@ ll_t* bubb_sort(ll_t *head, bool_t dir)
 		    printf("head->%d, pW1->%d, pW2->%d\n", head->data, pW1->data, pW2->data);
 		    printList(head);
 		    if ( ((dir==0) && (pW1->data) > (pW2->data)) || ((dir==1) && ((pW1->data) < (pW2->data)) ) ) /* check for proper ordering */
-			{
+		    {
 				/* swap underway */
 				swaps = 1;
 				if (pW1 == head)
 				{
-					pW1 = swap(pW0, pW1);
-					head = pW1;
+				      pW1 = swap(pW0, pW1);
+				      head = pW1;
 				}
 				else
 				{
-					pW1 = swap(pW0, pW1);
+				      pW1 = swap(pW0, pW1);
 				}
 				pW2 = pW1 -> pNext; /* make sure pW2 is synced with pW1 */
-			}
-			/* advance pointers through list */
+		    }
+		    /* advance pointers through list */
 		    pW0 = pW1; /* save pW1 so we can update pointer of parent to pW1 */
 		    pW1 = pW2; /* advance pW1 to next node */
 		    pW2 = pW1 -> pNext; /* advance pW2 */
