@@ -148,10 +148,10 @@ void printList(ll_t* head)
 ll_t* bubb_sort(ll_t *head, bool_t dir)
 {
 	bool_t 	swaps = 1; /* swapping flag for bubble sort algorithm */
-	ll_t	*pW0;
+	ll_t	*pW0; /* storage for main working pointer */
 	ll_t	*pW1; /* working pointer */
 	ll_t	*pW2; /* working pointer's "child" */
-    int		sweep = 1;
+	int	sweep = 1;
 
 	while (swaps)
 	{
