@@ -44,7 +44,7 @@ ll_t* addNode(ll_t* head, int value)
 {
 	/* create two node pointers */
     ll_t *node;
-	ll_t *p;
+    ll_t *p;
 
 	/* prepare the new node to be added */
     node = createNode();
@@ -77,19 +77,19 @@ ll_t* addNode(ll_t* head, int value)
  */
 ll_t*  find_largest(const ll_t *head, int *max)
 {
-		*max = head -> data;
-		int nexti;
-		ll_t* pw = head -> pNext; /* working pointer, initialized to head's child pointer */
-		while ( (pw -> pNext) != NULL )
+	*max = head -> data;
+	int nexti;
+	ll_t* pw = head -> pNext; /* working pointer, initialized to head's child pointer */
+	while ( (pw -> pNext) != NULL )
+	{
+		nexti = pw -> data;
+		if (*max < nexti)
 		{
-			nexti = pw -> data;
-			if (*max < nexti)
-			{
-				*max = nexti;
-			}
-			pw = pw -> pNext; /* advance the pointer */
+			*max = nexti;
 		}
-		return pw;
+		pw = pw -> pNext; /* advance the pointer */
+	}
+	return pw;
 }
 
 /*
