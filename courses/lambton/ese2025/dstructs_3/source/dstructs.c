@@ -98,12 +98,12 @@ ll_t*  find_largest(const ll_t *head, int *max)
  * 		assumes that initially:
  *
  * 		0 ----> A ----> B ----> 1
- *		   p2A     p2B     p21
+ *                 p2A     p2B     p21
  *
  *		and re-arranges pointers so that:
  *
  *		0 ----> B ----> A ----> 1
- *         p2B     p2A     p21
+ *                 p2B     p2A     p21
  *
  *       returning p0
  *
