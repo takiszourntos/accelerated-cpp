@@ -28,14 +28,8 @@ int main()
 		++i;
 	}
 
-	printf("Your original linked list is: \n");
-	ll_t* pW = mylisthead; /* our working pointer */
-	while (pW != NULL)
-	{
-		printf("%d ", pW -> data);
-		pW = pW -> pNext;
-	}
-	printf("\n\n");
+	printf("Your original linked list is: ");
+	printList(mylisthead);
 
 	/* find the largest element in the list */
 	int max_int;
@@ -44,12 +38,11 @@ int main()
 	/* sort the list for presentation */
 	mylisthead = bubb_sort(mylisthead, 1U); /* ascending order = 0, descending order = 1 */
 
-
 	/* announce the results */
-	printf("Your largest integer is %d\n\n", max_int);
+	printf("\nYour largest integer is %d\n\n", max_int);
 
-	printf("And your sorted list is: \n");
-	pW = mylisthead; /* our working pointer */
+	printf("and your sorted list is: \n");
+	ll_t* pW = mylisthead; /* our working pointer */
 	while ( pW != NULL)
 	{
 		printf("%d ", pW -> data);

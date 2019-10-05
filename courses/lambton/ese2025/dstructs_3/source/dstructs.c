@@ -128,7 +128,6 @@ ll_t* swap(ll_t* p20, ll_t* p2A)
  */
 void printList(ll_t* head)
 {
-	printf("list is:");
 	ll_t* pW = head; /* our working pointer */
 	while (pW != NULL)
 	{
