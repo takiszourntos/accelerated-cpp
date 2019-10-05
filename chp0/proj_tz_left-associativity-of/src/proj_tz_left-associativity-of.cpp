@@ -14,8 +14,9 @@ int main()
 	// and "send it" to its left argument (of type std::ostream), and
 	// RETURNS std::cout, allowing the operator to be chained together as seen
 	// below:
-	( (	(	(	(std::cout << "Halo Verld!") 	<< std::endl) 	<< "this line is an attempt to illustrate")	<< std::endl)
-			<< "the left-associativity of the \" << \" operator ") <<  std::endl;
-			; // prints Halo Verld!
+	
+	( ( ( (	(std::cout << "Halo Verld!") << std::endl) << "this line is an attempt to illustrate") << std::endl) 
+	 << "the left-associativity of the \" << \" operator ") <<  std::endl; // prints Halo Verld!
+	
 	return 0;
 }
