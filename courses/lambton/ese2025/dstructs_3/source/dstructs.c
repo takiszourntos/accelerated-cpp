@@ -181,9 +181,9 @@ ll_t* bubb_sort(ll_t *head, bool_t dir)
 				pW2 = pW1 -> pNext; /* make sure pW2 is synced with pW1 */
 			}
 			/* advance pointers through list */
-		    pW0 = pW1;
-		    pW1 = pW1 -> pNext;
-		    pW2 = pW1 -> pNext;
+		    pW0 = pW1; /* save pW1 so we can update pointer of parent to pW1 */
+		    pW1 = pW2; /* advance pW1 to next node */
+		    pW2 = pW1 -> pNext; /* advance pW2 */
 		}
 		++sweep;
 	}
