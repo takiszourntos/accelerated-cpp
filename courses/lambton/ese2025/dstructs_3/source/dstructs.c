@@ -5,6 +5,7 @@
  *      Author: takiss
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "dstructs.h"
 
@@ -96,29 +97,46 @@ ll_t*  find_largest(const ll_t *head, int *max)
  * 		swaps locations of adjacent elements A, B in the linked list;
  * 		assumes that initially:
  *
- * 		----> A ----> B ----> 1
- *		 p2A     p2B	 p21
+ * 		0 ----> A ----> B ----> 1
+ *		   p2A     p2B     p21
  *
  *		and re-arranges pointers so that:
  *
- *		----> B ----> A ----> 1
- *       p0      p2A     p21
+ *		0 ----> B ----> A ----> 1
+ *         p2B     p2A     p21
  *
  *       returning p0
  *
  */
-ll_t* swap(ll_t* p2A)
+
+ll_t* swap(ll_t* p20, ll_t* p2A)
 {
-	ll_t	*p0; /* return variable */
+	ll_t	*pr; /* return variable */
 	ll_t	*p2B = p2A -> pNext; /* pointer to B */
 	ll_t	*p21 = p2B -> pNext; /* what B is pointing to */
 
-	p0 = p2B;			/* p0 -> B */
+	pr = (p20 -> pNext) = p2B;	/* 0 -> B */
 	p2B -> pNext = p2A;	/* B -> A */
 	p2A -> pNext = p21; /* A -> 1 */
 
 	/* done */
-	return p0;
+	return pr;
+}
+
+/*
+ * print out the linked list
+ */
+void printList(ll_t* head)
+{
+	printf("list is:");
+	ll_t* pW = head; /* our working pointer */
+	while (pW != NULL)
+	{
+		printf("%d ", pW -> data);
+		pW = pW -> pNext;
+	}
+	printf("\n");
+	return;
 }
 
 /*
@@ -128,52 +146,45 @@ ll_t* swap(ll_t* p2A)
  */
 ll_t* bubb_sort(ll_t *head, bool_t dir)
 {
-	unsigned short int swaps = 1; /* swapping flag for bubble sort algorithm */
-	ll_t	*pW1=head; /* working pointer */
-	ll_t	*pW2=head->pNext; /* working pointer's "child" */
+	bool_t 	swaps = 1; /* swapping flag for bubble sort algorithm */
+	ll_t	*pW0;
+	ll_t	*pW1; /* working pointer */
+	ll_t	*pW2; /* working pointer's "child" */
+    size_t	sweep = 1;
 
 	while (swaps)
 	{
-		swaps = 0; // if a swap occurs, this flag is toggled
+		swaps = 0;
+		/* reset pointers to point to beginning of list */
+		pW0 = pW1 = head;
+		pW2 = pW1 -> pNext;
+		printf("sweep %d\n", sweep);
+
 		while (pW2 != NULL)
 		{
-			if ( (pW1->data) > (pW2->data) ) /* check for ascending order */
+		    printf("head->%d, pW1->%d, pW2->%d\n", head->data, pW1->data, pW2->data);
+		    printList(head);
+		    if ( ((dir==0) && (pW1->data) > (pW2->data)) || ((dir==1) && ((pW1->data) < (pW2->data)) ) ) /* check for ascending order */
 			{
-				if (dir==0)
+				/* swap underway */
+				swaps = 1;
+				if (pW1 == head)
 				{
-					/* swap underway */
-					swaps = 1;
-					if (pW1 == head)
-					{
-						pW1 = swap(pW1);
-						head = pW1;
-					}
-					else
-					{
-						pW1 = swap(pW1);
-					}
+					pW1 = swap(pW0, pW1);
+					head = pW1;
 				}
-			}
-			else if ( (pW1->data) <  (pW2->data) ) /* check for descending order */
-			{
-				if (dir==1)
+				else
 				{
-					/* swap underway */
-					swaps = 1; // a swap is underway...
-					if (pW1 == head)
-					{
-						pW1 = swap(pW1);
-						head = pW1;
-					}
-					else
-					{
-						pW1 = swap(pW1);
-					}				}
+					pW1 = swap(pW0, pW1);
+				}
+				pW2 = pW1 -> pNext; /* make sure pW2 is synced with pW1 */
 			}
 			/* advance pointers through list */
+		    pW0 = pW1;
 			pW1 = pW1 -> pNext;
 			pW2 = pW1 -> pNext;
 		}
+		++sweep;
 	}
 	return head;
 }

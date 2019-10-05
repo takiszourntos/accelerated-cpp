@@ -63,7 +63,15 @@ ll_t* 	find_largest(const ll_t*, int *);
  * 		pointers to each element to be swapped
  *
  */
-ll_t*	swap(ll_t*);
+ll_t*	swap(ll_t*, ll_t*);
+
+/*
+ * printList():
+ *
+ * 		print a linked list
+ */
+void printList(ll_t*);
+
 
 /*
  * bubb_sort():

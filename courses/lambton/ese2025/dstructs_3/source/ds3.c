@@ -5,7 +5,6 @@
  *      Author: takis
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "dstructs.h"
@@ -15,8 +14,7 @@
 int main()
 {
 
-	int loadarr[N] = { 23, 46, 227, 81, 320,
-                       17,  9,  26, 25, 22  };
+	int loadarr[N] = {46, 2, 227, 23, 81, 320, 17, 9, 26, 25};
 
 	/* create a linked list from loadarr data */
 	ll_t* mylisthead;
@@ -41,12 +39,10 @@ int main()
 
 	/* find the largest element in the list */
 	int max_int;
-	ll_t *pLargest = NULL;
-	if ((pLargest = find_largest(mylisthead, &max_int))==NULL)
-		printf("error: list must contain more than one element");
+	find_largest(mylisthead, &max_int);
 
 	/* sort the list for presentation */
-	mylisthead = bubb_sort(mylisthead, 0U); /* ascending order = 0, descending order = 1 */
+	mylisthead = bubb_sort(mylisthead, 1U); /* ascending order = 0, descending order = 1 */
 
 
 	/* announce the results */
@@ -54,7 +50,7 @@ int main()
 
 	printf("And your sorted list is: \n");
 	pW = mylisthead; /* our working pointer */
-	while (pW != NULL)
+	while ( pW != NULL)
 	{
 		printf("%d ", pW -> data);
 		pW = pW -> pNext;
