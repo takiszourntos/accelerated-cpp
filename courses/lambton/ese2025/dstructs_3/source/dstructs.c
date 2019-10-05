@@ -150,7 +150,7 @@ ll_t* bubb_sort(ll_t *head, bool_t dir)
 	ll_t	*pW0;
 	ll_t	*pW1; /* working pointer */
 	ll_t	*pW2; /* working pointer's "child" */
-    size_t	sweep = 1;
+    int		sweep = 1;
 
 	while (swaps)
 	{
@@ -164,7 +164,7 @@ ll_t* bubb_sort(ll_t *head, bool_t dir)
 		{
 		    printf("head->%d, pW1->%d, pW2->%d\n", head->data, pW1->data, pW2->data);
 		    printList(head);
-		    if ( ((dir==0) && (pW1->data) > (pW2->data)) || ((dir==1) && ((pW1->data) < (pW2->data)) ) ) /* check for ascending order */
+		    if ( ((dir==0) && (pW1->data) > (pW2->data)) || ((dir==1) && ((pW1->data) < (pW2->data)) ) ) /* check for proper ordering */
 			{
 				/* swap underway */
 				swaps = 1;
