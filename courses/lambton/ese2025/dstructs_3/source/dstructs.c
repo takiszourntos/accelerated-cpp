@@ -12,32 +12,32 @@
 /*
  * createNode():
  *
- * 		creates a node of type ll_t from the heap, and returns
- * 		a pointer to this newly created node; sets the node's own
- * 	    pNext pointer to NULL
+ * creates a node of type ll_t from the heap, and returns
+ * a pointer to this newly created node; sets the node's own
+ * pNext pointer to NULL
  *
  */
 ll_t* createNode()
 {
 	/* create a pointer for the new node */
-    ll_t 	*node;
+    ll_t *node;
 
     /* allocate the node from heap */
-    node = 	(ll_t *) malloc(sizeof(ll_t));
+    node = (ll_t *) malloc(sizeof(ll_t));
 
     /* make next point to NULL */
     node -> pNext = NULL;//
 
     /* return the pointer to the new node */
-    return 	node;
+    return node;
 }
 
 /*
  * addNode():
  *
- * 		adds a new node (with node->data = value) to the bottom/back
- * 		of the list referenced by the pointer, head;
- * 		if head==NULL, a new list is created
+ * adds a new node (with node->data = value) to the bottom/back
+ * of the list referenced by the pointer, head;
+ * if head==NULL, a new list is created
  *
  */
 ll_t* addNode(ll_t* head, int value)
@@ -70,8 +70,9 @@ ll_t* addNode(ll_t* head, int value)
 
 /*
  * find_largest():
- * 		returns a pointer to the largest element in the list;
- * 		returns maximum value as second parameter (passed by reference)
+ *
+ * returns a pointer to the largest element in the list;
+ * returns maximum value as second parameter (passed by reference)
  *
  */
 ll_t*  find_largest(const ll_t *head, int *max)
@@ -105,7 +106,7 @@ ll_t*  find_largest(const ll_t *head, int *max)
  *		0 ----> B ----> A ----> 1
  *                 p2B     p2A     p21
  *
- *       returning p0
+ *       	returning p0
  *
  */
 
@@ -115,8 +116,8 @@ ll_t* swap(ll_t* p20, ll_t* p2A)
 	ll_t	*p2B = p2A -> pNext; /* pointer to B */
 	ll_t	*p21 = p2B -> pNext; /* what B is pointing to */
 
-	pr = (p20 -> pNext) = p2B;	/* 0 -> B */
-	p2B -> pNext = p2A;	/* B -> A */
+	pr = (p20 -> pNext) = p2B; /* 0 -> B */
+	p2B -> pNext = p2A; /* B -> A */
 	p2A -> pNext = p21; /* A -> 1 */
 
 	/* done */
@@ -140,7 +141,8 @@ void printList(ll_t* head)
 
 /*
  * bubb_sort():
- * 		performs a Bubble Sort on a list (referenced by head pointer parameter)
+ * 
+ * performs a Bubble Sort on a list (referenced by head pointer parameter)
  *
  */
 ll_t* bubb_sort(ll_t *head, bool_t dir)
@@ -180,8 +182,8 @@ ll_t* bubb_sort(ll_t *head, bool_t dir)
 			}
 			/* advance pointers through list */
 		    pW0 = pW1;
-			pW1 = pW1 -> pNext;
-			pW2 = pW1 -> pNext;
+		    pW1 = pW1 -> pNext;
+		    pW2 = pW1 -> pNext;
 		}
 		++sweep;
 	}
