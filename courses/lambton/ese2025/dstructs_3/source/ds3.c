@@ -1,5 +1,9 @@
 /*
- * ds2.c
+ * ds3.c
+ *
+ *   program uses our C-based linked-list library to create a singly-linked list
+ *   from user input and sort the list using a bubble-sort algorithm; 
+ *
  *
  *  Created on: Oct. 3, 2019
  *      Author: takis
