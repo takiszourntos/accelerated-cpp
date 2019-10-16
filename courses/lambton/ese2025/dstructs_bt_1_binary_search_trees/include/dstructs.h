@@ -20,9 +20,9 @@ typedef struct bt_struct
 
 
 /*
- * compare function needed for qsort() in the stdlib
+ * compare function needed for qsort() in the stdlib, based on integer comparisons
  */
-int comp(const void*, const void *);
+int comp_int(const void*, const void *);
 
 /*
  * median finder presumes set is sorted
@@ -30,8 +30,8 @@ int comp(const void*, const void *);
  * if the set contains an even number of elements, function
  * returns index to element just to left of median
  *
- * returns -1 if set is empty or contains only 1 element
- *
+ * returns -1 if set is empty or contains only 1 element , otherwise
+ * 	        returns the (size_t) array index to the median element
  */
 size_t find_sorted_median(key_t*, size_t);
 
@@ -48,11 +48,11 @@ key_t *form_set(const key_t*, size_t , size_t);
 void printset(key_t*, size_t);
 
 /*
- * function creates a node for the binary tree, loaded with NULL pointers and un-initialized key
+ * function creates a "blank" node for the binary tree, loaded with NULL pointers and un-initialized key
  *
  * user must integrate this new node into the tree and provide an appropriate key value
- *
  */
+
 bt_t* createNode(void);
 
 /*

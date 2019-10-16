@@ -79,7 +79,7 @@ void printset(key_t *pset, size_t Lset)
 }
 
 /*
- * function creates a node for the binary tree, loaded with NULL pointers and un-initialized key
+ * function creates a "blank" node for the binary tree, loaded with NULL pointers and un-initialized key
  *
  * user must integrate this new node into the tree and provide an appropriate key value
  */
@@ -133,22 +133,45 @@ bt_t* addNode(bt_t *pHead, key_t val)
 }
 
 /*
- * function erects a balanced binary tree from the set provided by pS[]
+ * function erects a balanced binary tree from the set provided by the sorted set, pS[]
+ *
+ * PLEASE NOTE: pS[] must be a sorted array for balanced construction!
  *
  * returns a pointer to root node of the resulting binary search tree
  */
 bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
 {
-	key_t* pM;
-	size_t NS = sizeof(pS)/sizeof(key_t);
+	size_t iM; /* index of median (or near-median) value in pS */
+	size_t NS = sizeof(pS)/sizeof(key_t); /* size of set */
+	key_t* pSleft; /* storage for left sub-array of pS */
+	key_t* pSright; /* storage for right sub-array of pS */
 
 	/* check for empty sets --- please no jokes! */
 	if (pS == NULL)
 		exit(EXIT_FAILURE);
 
-	if (NS==1)
+	/* if pS not empty, continue */
+	if (NS==1) /* if the set contains just one element */
 	{
-
+		pHead = addNode(pHead, pS[0]);
+		return pHead;
+	}
+	else
+	{
+		iM = find_sorted_median(pS, NS);
+		pHead = addNode(pHead, pS[iM]); /* form a new node with the median key */
+		if (iM != 0)
+		{
+			pSleft = form_set(pS, 0, iM-1); /* create the left sub-array upon which to base the left sub-tree */
+			pSright = form_set(pS, iM+1, NS-1); /* create the right sub-array upon which to base the right sub-tree */
+			pHead->pL = createBalancedBT(pHead, pSleft); /* create the left sub-tree */
+			pHead->pR = createBalancedBT(pHead, pSright); /* create the right sub-tree */
+		}
+		else /* we have two elements in the array, and the median is (necessarily) element 0 */
+		{
+			pHead->pR = addNode(pHead, pS[1]);
+		}
+		return pHead;
 	}
 }
 
