@@ -53,7 +53,17 @@ void printset(key_t*, size_t);
  * user must integrate this new node into the tree and provide an appropriate key value
  *
  */
-bt_t* createnode(void);
+bt_t* createNode(void);
+
+/*
+ * function adds a node with parameter val as key data to the appropriate location on the existing tree;
+ *
+ * if a tree does not yet exist, the created node becomes the root node
+ *
+ * returns a pointer to the modified (or newly created) binary search tree
+ */
+bt_t* addNode(bt_t*, key_t);
+
 
 
 #endif /* INCLUDE_DSTRUCTS_H_ */

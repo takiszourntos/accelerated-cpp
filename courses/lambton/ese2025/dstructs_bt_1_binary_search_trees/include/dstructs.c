@@ -33,7 +33,6 @@ int comp(const void* a, const void *b)
  * returns index to element just to left of median
  *
  * returns -1 if set is empty or contains only 1 element
- *
  */
 size_t find_sorted_median(key_t *pset, size_t Lset)
 {
@@ -83,9 +82,8 @@ void printset(key_t *pset, size_t Lset)
  * function creates a node for the binary tree, loaded with NULL pointers and un-initialized key
  *
  * user must integrate this new node into the tree and provide an appropriate key value
- *
  */
-bt_t* createnode(void)
+bt_t* createNode(void)
 {
 	bt_t	pn = (bt_t *) malloc(sizeof(bt_t)); /* create the node in memory, providing a pointer to it */
 
@@ -96,15 +94,83 @@ bt_t* createnode(void)
 	return pn;
 }
 
-bt_t* addnode(bt_t *pHead, key_t val)
+/*
+ * function adds a node with parameter val as key data to the appropriate location on the existing tree (pointed to by pHead)
+ *
+ * if a tree does not yet exist, the created node becomes the root node
+ *
+ * returns a pointer to the modified (or newly created) binary search tree
+ */
+bt_t* addNode(bt_t *pHead, key_t val)
 {
 	bt_t	*pW = pHead; /* our working pointer, initialized to head pointer */
-	bt_t	*pnode = createnode(); /* create the node to add */
-	pnode->key = val;
+	bt_t	*pNode = createNode(); /* create the node to add */
+	pNode->key = val; /* set key of new node to be added to tree */
 
 	if (pHead==NULL)
+	{
+		pHead = pNode; /* if no structure yet exists, new node is root  */
+	}
+	else
+	{
+		bt_t* pParent; /* storage for pointer to parent node */
+		key_t valW; /* key value of working pointer */
+		while (pW != NULL)
+		{
+			pParent = pW; /* save this before pW moves on */
+			valW = pW->key;
+			if (val < valW)
+				pW=pW->pL;
+			else if (val > valW)
+				pW=pW->pR;
+			else /* identical keys are not allowed! */
+				exit(EXIT_FAILURE);
+		}
+		pW = pNode;
+	}
 
 	return pHead;
 }
+
+/*
+ * function erects a balanced binary tree from the set provided by pS[]
+ *
+ * returns a pointer to root node of the resulting binary search tree
+ */
+bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
+{
+	key_t* pM;
+	size_t NS = sizeof(pS)/sizeof(key_t);
+
+	/* check for empty sets --- please no jokes! */
+	if (pS == NULL)
+		exit(EXIT_FAILURE);
+
+	if (NS==1)
+	{
+
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
