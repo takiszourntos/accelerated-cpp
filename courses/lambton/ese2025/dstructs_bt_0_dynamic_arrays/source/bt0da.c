@@ -1,5 +1,5 @@
 /*
- * bt0da.c
+ * bt0da.c : demonstrate dynamic array allocation
  *
  *  Created on: Oct. 16, 2019
  *      Author: takis
@@ -33,7 +33,7 @@ int comp(const void* a, const void *b)
  * if the set contains an even number of elements, function
  * returns index to element just to left of median
  *
- * returns -1 if set is empty
+ * returns -1 if set is empty or contains only 1 element
  *
  */
 size_t find_sorted_median(key_t *pset, size_t Lset)
@@ -48,15 +48,10 @@ size_t find_sorted_median(key_t *pset, size_t Lset)
 	return i_median; /* set must contain at least two elements */
 }
 
-void printset(key_t *pset, size_t Lset)
-{
-	for (size_t i=0; i != Lset; ++i)
-	{
-		printf("%d ",pset[i]);
-	}
-	printf("\n");
-}
-
+/*
+ * function dynamically allocates an array of size given by
+ * (iright-ileft)+1, made from another array pointed to by pset
+ */
 key_t	*form_set(const key_t *pset, size_t ileft, size_t iright)
 {
 	key_t *pnew = (key_t *) malloc((iright-ileft+1)*sizeof(key_t));
@@ -66,6 +61,21 @@ key_t	*form_set(const key_t *pset, size_t ileft, size_t iright)
 	}
 	return pnew;
 }
+
+/*
+ * function prints out an array on one line,
+ * caller must provide the size of the set (Lset)
+ */
+void printset(key_t *pset, size_t Lset)
+{
+	for (size_t i=0; i != Lset; ++i)
+	{
+		printf("%d ",pset[i]);
+	}
+	printf("\n");
+}
+
+
 
 int main(void)
 {
