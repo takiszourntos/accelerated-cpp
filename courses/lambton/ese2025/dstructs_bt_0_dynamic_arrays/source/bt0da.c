@@ -20,10 +20,12 @@ int comp(const void* a, const void *b)
 {
 	int ia=*((int *) a);
 	int ib=*((int *) b);
+
 	if (ia<ib)
 		return -1;
 	else if (ia>ib)
 		return +1;
+
 	return 0; /* default return if ia==ib */
 }
 
@@ -55,10 +57,12 @@ size_t find_sorted_median(key_t *pset, size_t Lset)
 key_t	*form_set(const key_t *pset, size_t ileft, size_t iright)
 {
 	key_t *pnew = (key_t *) malloc((iright-ileft+1)*sizeof(key_t));
+
 	for (size_t i=ileft; i != (iright+1); ++i)
 	{
 		pnew[i-ileft] = pset[i];
 	}
+
 	return pnew;
 }
 
@@ -68,15 +72,21 @@ key_t	*form_set(const key_t *pset, size_t ileft, size_t iright)
  */
 void printset(key_t *pset, size_t Lset)
 {
+
 	for (size_t i=0; i != Lset; ++i)
 	{
 		printf("%d ",pset[i]);
 	}
 	printf("\n");
+
+	return;
 }
 
-
-
+/*
+ *
+ * main code begins here
+ *
+ */
 int main(void)
 {
 	size_t 	im;
