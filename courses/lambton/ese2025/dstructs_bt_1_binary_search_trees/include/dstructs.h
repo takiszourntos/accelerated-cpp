@@ -1,23 +1,24 @@
-/*
- * dstructs.h
+#ifndef INCLUDE_DSTRUCTS_H_
+#define INCLUDE_DSTRUCTS_H_
+ /* dstructs.h
  *
  *  Created on: Oct. 16, 2019
  *      Author: takis
  */
 
-#ifndef INCLUDE_DSTRUCTS_H_
-#define INCLUDE_DSTRUCTS_H_
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef int	key_t;
 
-typedef struct bt_struct
+struct bst_node
 {
 	key_t	key;	/* node key value */
-	bt_t	*pMama;	/* pointer to node's parent */
-	bt_t	*pL;	/* pointer to node's left child */
-	bt_t	*pR;	/* pointer to node's right (but sometimes wrong) child */
-} bt_t;
-
+	struct bst_node	*pMama;	/* pointer to node's parent */
+	struct bst_node	*pL;	/* pointer to node's left child */
+	struct bst_node	*pR;	/* pointer to node's right (but sometimes wrong) child */
+};
+typedef struct bst_node bt_t;
 
 /*
  * compare function needed for qsort() in the stdlib, based on integer comparisons
@@ -64,6 +65,26 @@ bt_t* createNode(void);
  */
 bt_t* addNode(bt_t*, key_t);
 
+
+/*
+ * function creates a binary tree by scanning set S in order, placing successive elements into the tree via addNode()
+ */
+bt_t* createBT(bt_t*, key_t*,size_t);
+
+/*
+ * function erects a balanced binary tree from the set provided by the sorted set, S (pS[])
+ *
+ * PLEASE NOTE: pS[] must be a sorted array for balanced construction!
+ *
+ * returns a pointer to root node of the resulting binary search tree
+ */
+bt_t* createBalancedBT(bt_t*, key_t*);
+
+
+/*
+ * function performs an in-order tree traversal, identifying key values in order
+ */
+void inOrderTraversal(bt_t*);
 
 
 #endif /* INCLUDE_DSTRUCTS_H_ */

@@ -11,9 +11,9 @@
 
 
 /*
- * compare function needed for qsort() in the stdlib
+ * compare function needed for qsort() in the stdlib, based on integer comparisons
  */
-int comp(const void* a, const void *b)
+int comp_int(const void* a, const void *b)
 {
 	int ia=*((int *) a);
 	int ib=*((int *) b);
@@ -85,7 +85,8 @@ void printset(key_t *pset, size_t Lset)
  */
 bt_t* createNode(void)
 {
-	bt_t	pn = (bt_t *) malloc(sizeof(bt_t)); /* create the node in memory, providing a pointer to it */
+	bt_t *pn;
+	pn = malloc(sizeof(bt_t)); /* create the node in memory, providing a pointer to it */
 
 	pn->pMama = NULL;
 	pn->pL = NULL;
@@ -110,30 +111,57 @@ bt_t* addNode(bt_t *pHead, key_t val)
 	if (pHead==NULL)
 	{
 		pHead = pNode; /* if no structure yet exists, new node is root  */
+		printf("BT: HEAD adding %d ...\n",pHead->key);
 	}
 	else
 	{
-		bt_t* pParent; /* storage for pointer to parent node */
+		bt_t *pParent; /* storage for pointer to parent node */
 		key_t valW; /* key value of working pointer */
 		while (pW != NULL)
 		{
 			pParent = pW; /* save this before pW moves on */
 			valW = pW->key;
 			if (val < valW)
+			{
+				printf("BT: moving LEFT ...\n");
 				pW=pW->pL;
+			}
 			else if (val > valW)
+			{
+				printf("BT: moving RIGHT ... \n");
 				pW=pW->pR;
+			}
 			else /* identical keys are not allowed! */
+			{
 				exit(EXIT_FAILURE);
+			}
 		}
-		pW = pNode;
+		pW = pNode; /* attach node */
+		pW->pMama = pParent;
+		printf("BT: just attached pNode with value %lu\n",pW->key);
 	}
 
 	return pHead;
 }
 
 /*
- * function erects a balanced binary tree from the set provided by the sorted set, pS[]
+ * function creates a binary tree by scanning set S in order, placing successive elements into the tree via addNode()
+ */
+bt_t* createBT(bt_t* pHead, key_t* pS, size_t NS)
+{
+
+	pHead = addNode(pHead, pS[0]);
+	for (size_t i = 1; i != NS; ++i)
+	{
+		//printf("element i=%lu of S, adding %d ...\n", i, pS[i]);
+		addNode(pHead, pS[i]);
+	}
+
+	return pHead;
+}
+
+/*
+ * function erects a balanced binary tree from the set provided by the sorted set, S (pS[])
  *
  * PLEASE NOTE: pS[] must be a sorted array for balanced construction!
  *
@@ -141,10 +169,10 @@ bt_t* addNode(bt_t *pHead, key_t val)
  */
 bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
 {
-	size_t iM; /* index of median (or near-median) value in pS */
-	size_t NS = sizeof(pS)/sizeof(key_t); /* size of set */
-	key_t* pSleft; /* storage for left sub-array of pS */
-	key_t* pSright; /* storage for right sub-array of pS */
+	size_t iM; /* index of median (or near-median) value in S */
+	size_t NS = sizeof(pS)/sizeof(key_t); /* size of set S */
+	key_t* pSleft; /* storage for left sub-array of S */
+	key_t* pSright; /* storage for right sub-array of S */
 
 	/* check for empty sets --- please no jokes! */
 	if (pS == NULL)
@@ -159,7 +187,7 @@ bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
 	else
 	{
 		iM = find_sorted_median(pS, NS);
-		pHead = addNode(pHead, pS[iM]); /* form a new node with the median key */
+		pHead = addNode(pHead, pS[iM]); /* form a new node with the median key (all pointers of node initiaized to NULL by createNode) */
 		if (iM != 0)
 		{
 			pSleft = form_set(pS, 0, iM-1); /* create the left sub-array upon which to base the left sub-tree */
@@ -169,14 +197,26 @@ bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
 		}
 		else /* we have two elements in the array, and the median is (necessarily) element 0 */
 		{
-			pHead->pR = addNode(pHead, pS[1]);
+			pHead->pR = addNode(pHead, pS[1]); /* pS[0] node already created above */
 		}
 		return pHead;
 	}
 }
 
+/*
+ * function performs an in-order tree traversal, identifying key values in order
+ */
+void inOrderTraversal(bt_t *pT)
+{
+	if (pT != NULL)
+	{
+		inOrderTraversal(pT->pL);
+		printf("%d ", pT->key);
+		inOrderTraversal(pT->pR);
+	}
 
-
+	return;
+}
 
 
 
