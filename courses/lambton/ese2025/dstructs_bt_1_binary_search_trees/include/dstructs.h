@@ -74,7 +74,7 @@ bt_t* addNode(bt_t*, key_t);
 /*
  * function creates a binary tree by scanning set S in order, placing successive elements into the tree via addNode()
  */
-bt_t* createBT(bt_t*, key_t*,size_t);
+bt_t* createBT(bt_t*, key_t*, size_t);
 
 /*
  * function erects a balanced binary tree from the set provided by the sorted set, S (pS[])
@@ -83,8 +83,7 @@ bt_t* createBT(bt_t*, key_t*,size_t);
  *
  * returns a pointer to root node of the resulting binary search tree
  */
-bt_t* createBalancedBT(bt_t*, key_t*);
-
+bt_t* createBalBT(key_t*, size_t);
 
 /*
  * function performs an in-order tree traversal, identifying key values in order

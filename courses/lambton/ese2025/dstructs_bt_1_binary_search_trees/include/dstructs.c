@@ -171,6 +171,7 @@ bt_t* createBT(bt_t* pHead, key_t* pS, size_t NS)
 	return pHead;
 }
 
+
 /*
  * function erects a balanced binary tree from the set provided by the sorted set, S (pS[])
  *
@@ -178,40 +179,40 @@ bt_t* createBT(bt_t* pHead, key_t* pS, size_t NS)
  *
  * returns a pointer to root node of the resulting binary search tree
  */
-bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
+bt_t* createBalBT(key_t* pS, size_t NS)
 {
-	size_t iM; /* index of median (or near-median) value in S */
-	size_t NS = sizeof(pS)/sizeof(key_t); /* size of set S */
-	key_t* pSleft; /* storage for left sub-array of S */
-	key_t* pSright; /* storage for right sub-array of S */
+	bt_t* pHead=NULL; /* the pointer to the BT that is returned */
 
-	/* check for empty sets --- please no jokes! */
-	if (pS == NULL)
-		exit(EXIT_FAILURE);
-
-	/* if pS not empty, continue */
-	if (NS==1) /* if the set contains just one element */
+	if (NS==0) /* no elements in the set S, pointed to by pS */
 	{
-		pHead = addNode(pHead, pS[0]);
 		return pHead;
 	}
-	else
+	else if (NS == 1) /* just one element in the set S */
 	{
-		iM = find_sorted_median(pS, NS);
-		pHead = addNode(pHead, pS[iM]); /* form a new node with the median key (all pointers of node initialized to NULL by createNode()) */
-		if (iM != 0)
-		{
-			pSleft = form_set(pS, 0, iM-1); /* create the left sub-array upon which to base the left sub-tree */
-			pSright = form_set(pS, iM+1, NS-1); /* create the right sub-array upon which to base the right sub-tree */
-			pHead->pL = createBalancedBT(pHead, pSleft); /* create the left sub-tree */
-			pHead->pR = createBalancedBT(pHead, pSright); /* create the right sub-tree */
-		}
-		else /* we have two elements in the array, and the median is (necessarily) element 0 */
-		{
-			pHead->pR = addNode(pHead, pS[1]); /* pS[0] node already created above */
-		}
+		bt_t* pNode = createNode();
+		pNode -> key = pS[0];
+		pHead = pNode;
+		printf("cBBT: created a single node with key %d\n", pS[0]);
 		return pHead;
 	}
+	else /* at least two elements in the set S */
+	{
+		key_t iM = find_sorted_median(pS, NS);
+		key_t* pSleft = form_set(pS, 0, iM-1);
+		size_t NSleft = iM;
+		key_t* pSright = form_set(pS, iM+1, NS-1);
+		size_t NSright = NS-iM-1;
+		bt_t* pNode = createNode();
+		pNode->key = pS[iM];
+		pHead = pNode;
+		printf("cBBT: created a parent node with key %d\n", pS[iM]);
+		printf("cBBT: going left...  (parent key is %d)\n", pS[iM]);
+		pNode->pL = createBalBT(pSleft, NSleft);
+		printf("cBBT: going right... (parent key is %d)\n", pS[iM]);
+		pNode->pR = createBalBT(pSright, NSright);
+	}
+
+	return pHead;
 }
 
 /*

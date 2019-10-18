@@ -23,8 +23,7 @@ int main(void)
 
 	/* attempt to create a more balanced tree */
 	qsort(pS, NS, sizeof(key_t), comp_int); /* sort the array "in place" */
-	bt_t *pBTbal=NULL;
-	pBTbal = createBalancedBT(pBTbal, pS);
+	bt_t *pBTbal=createBalBT(pS, NS);
 	printf("Your Binary Search Tree contains the elements: \n");
 	inOrderTraversal(pBTbal);
 	printf("\n\n");
