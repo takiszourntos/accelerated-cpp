@@ -198,7 +198,7 @@ bt_t* createBalancedBT(bt_t* pHead, key_t* pS)
 	else
 	{
 		iM = find_sorted_median(pS, NS);
-		pHead = addNode(pHead, pS[iM]); /* form a new node with the median key (all pointers of node initiaized to NULL by createNode) */
+		pHead = addNode(pHead, pS[iM]); /* form a new node with the median key (all pointers of node initialized to NULL by createNode()) */
 		if (iM != 0)
 		{
 			pSleft = form_set(pS, 0, iM-1); /* create the left sub-array upon which to base the left sub-tree */

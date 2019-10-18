@@ -14,13 +14,22 @@ int main(void)
 	key_t  pS[]={6,4,7,3,2,1,8,5,0,9};
 	size_t NS = sizeof(pS)/sizeof(key_t);
 
-	//qsort(pS, NS, sizeof(key_t), comp_int); /* sort the array "in place" */
 
-	bt_t *pBT=NULL;
-	pBT = createBT(pBT, pS, NS);
+//	bt_t *pBT=NULL;
+//	pBT = createBT(pBT, pS, NS);
+//	printf("Your Binary Search Tree contains the elements: \n");
+//	inOrderTraversal(pBT);
+//	printf("\n\n");
+
+	/* attempt to create a more balanced tree */
+	qsort(pS, NS, sizeof(key_t), comp_int); /* sort the array "in place" */
+	bt_t *pBTbal=NULL;
+	pBTbal = createBalancedBT(pBTbal, pS);
 	printf("Your Binary Search Tree contains the elements: \n");
-	inOrderTraversal(pBT);
+	inOrderTraversal(pBTbal);
 	printf("\n\n");
+
+
 
 	return 0;
 }
