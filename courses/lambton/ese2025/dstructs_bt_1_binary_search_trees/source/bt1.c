@@ -11,24 +11,24 @@
 
 int main(void)
 {
-	key_t  pS[]={6,4,7,3,2,1,8,5,0,9};
+	key_t  pS[]={6,4,7,3,2,1,8,5,0,9,10};
 	size_t NS = sizeof(pS)/sizeof(key_t);
 
-
-//	bt_t *pBT=NULL;
-//	pBT = createBT(pBT, pS, NS);
-//	printf("Your Binary Search Tree contains the elements: \n");
-//	inOrderTraversal(pBT);
-//	printf("\n\n");
+	/* basic tree creation */
+	printf("************ Creating tree based on unsorted key list: ***************** \n");
+	bt_t *pBT=NULL;
+	pBT = createBT(pBT, pS, NS);
+	printf("Your Binary Search Tree contains the elements: \n");
+	inOrderTraversal(pBT);
+	printf("\n\n");
 
 	/* attempt to create a more balanced tree */
+	printf("************ Creating tree based on sorted key list and median-finding: ***************** \n");
 	qsort(pS, NS, sizeof(key_t), comp_int); /* sort the array "in place" */
-	bt_t *pBTbal=createBalBT(pS, NS);
+	bt_t *pBTbal=createBalBT(pS, NS, NULL);
 	printf("Your Binary Search Tree contains the elements: \n");
 	inOrderTraversal(pBTbal);
 	printf("\n\n");
-
-
 
 	return 0;
 }

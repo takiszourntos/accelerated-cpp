@@ -83,7 +83,7 @@ bt_t* createBT(bt_t*, key_t*, size_t);
  *
  * returns a pointer to root node of the resulting binary search tree
  */
-bt_t* createBalBT(key_t*, size_t);
+bt_t* createBalBT(key_t*, size_t, bt_t*);
 
 /*
  * function performs an in-order tree traversal, identifying key values in order

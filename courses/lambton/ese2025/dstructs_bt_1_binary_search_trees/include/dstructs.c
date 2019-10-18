@@ -40,7 +40,8 @@ size_t find_sorted_median(key_t *pset, size_t Lset)
 
 	if (Lset != 0 )
 	{
-		i_median = Lset/2-1;
+		//i_median = Lset/2-1;
+		i_median = Lset/2; /* seems to create trees with one fewer levels */
 	}
 
 	return i_median; /* set must contain at least two elements */
@@ -124,13 +125,13 @@ bt_t* addNode(bt_t *pHead, key_t val)
 			valW = pW->key;
 			if (val < valW)
 			{
-				printf("BT: moving LEFT ...\n");
+				printf("BT: moving LEFT ... parent key is %d\n", valW);
 				pW=pW->pL;
 				wentleft=TRUE;
 			}
 			else if (val > valW)
 			{
-				printf("BT: moving RIGHT ... \n");
+				printf("BT: moving RIGHT ... parent key is %d\n", valW);
 				pW=pW->pR;
 				wentleft=FALSE;
 			}
@@ -179,7 +180,7 @@ bt_t* createBT(bt_t* pHead, key_t* pS, size_t NS)
  *
  * returns a pointer to root node of the resulting binary search tree
  */
-bt_t* createBalBT(key_t* pS, size_t NS)
+bt_t* createBalBT(key_t* pS, size_t NS, bt_t* pParent)
 {
 	bt_t* pHead=NULL; /* the pointer to the BT that is returned */
 
@@ -191,6 +192,7 @@ bt_t* createBalBT(key_t* pS, size_t NS)
 	{
 		bt_t* pNode = createNode();
 		pNode -> key = pS[0];
+		pNode -> pMama = pParent;
 		pHead = pNode;
 		printf("cBBT: created a single node with key %d\n", pS[0]);
 		return pHead;
@@ -204,12 +206,13 @@ bt_t* createBalBT(key_t* pS, size_t NS)
 		size_t NSright = NS-iM-1;
 		bt_t* pNode = createNode();
 		pNode->key = pS[iM];
+		pNode -> pMama = pParent;
 		pHead = pNode;
 		printf("cBBT: created a parent node with key %d\n", pS[iM]);
 		printf("cBBT: going left...  (parent key is %d)\n", pS[iM]);
-		pNode->pL = createBalBT(pSleft, NSleft);
+		pNode->pL = createBalBT(pSleft, NSleft, pHead);
 		printf("cBBT: going right... (parent key is %d)\n", pS[iM]);
-		pNode->pR = createBalBT(pSright, NSright);
+		pNode->pR = createBalBT(pSright, NSright, pHead);
 	}
 
 	return pHead;
