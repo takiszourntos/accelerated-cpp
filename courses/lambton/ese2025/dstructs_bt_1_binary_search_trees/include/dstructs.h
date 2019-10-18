@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define	TRUE	1U
+#define FALSE	0U
+
 typedef int	key_t;
 
 struct bst_node
@@ -19,6 +22,8 @@ struct bst_node
 	struct bst_node	*pR;	/* pointer to node's right (but sometimes wrong) child */
 };
 typedef struct bst_node bt_t;
+
+typedef unsigned short int bool_t;
 
 /*
  * compare function needed for qsort() in the stdlib, based on integer comparisons

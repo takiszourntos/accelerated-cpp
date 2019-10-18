@@ -50,7 +50,7 @@ size_t find_sorted_median(key_t *pset, size_t Lset)
  * function dynamically allocates an array of size given by
  * (iright-ileft)+1, made from another array pointed to by pset
  */
-key_t	*form_set(const key_t *pset, size_t ileft, size_t iright)
+key_t *form_set(const key_t *pset, size_t ileft, size_t iright)
 {
 	key_t *pnew = (key_t *) malloc((iright-ileft+1)*sizeof(key_t));
 
@@ -115,6 +115,7 @@ bt_t* addNode(bt_t *pHead, key_t val)
 	}
 	else
 	{
+		bool_t wentleft;
 		bt_t *pParent; /* storage for pointer to parent node */
 		key_t valW; /* key value of working pointer */
 		while (pW != NULL)
@@ -125,20 +126,30 @@ bt_t* addNode(bt_t *pHead, key_t val)
 			{
 				printf("BT: moving LEFT ...\n");
 				pW=pW->pL;
+				wentleft=TRUE;
 			}
 			else if (val > valW)
 			{
 				printf("BT: moving RIGHT ... \n");
 				pW=pW->pR;
+				wentleft=FALSE;
 			}
 			else /* identical keys are not allowed! */
 			{
 				exit(EXIT_FAILURE);
 			}
 		}
-		pW = pNode; /* attach node */
-		pW->pMama = pParent;
-		printf("BT: just attached pNode with value %lu\n",pW->key);
+		//pW = pNode; /* attach node */
+		if (wentleft)
+		{
+			pParent->pL = pNode; /* set the node's left pointer */
+		}
+		else /* must have gone right */
+		{
+			pParent->pR = pNode; /* set the node's right pointer */
+		}
+		pNode->pMama = pParent;
+		printf("BT: just attached pNode with value %d\n",val);
 	}
 
 	return pHead;
